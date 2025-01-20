@@ -30,9 +30,9 @@ GameZone is an engaging platform that brings together multiple game genres, offe
 
 ## 🔗 Useful Links
 
-- **Live Site**: [GameZone](#) *(Add your live site link here)*  
-- **Backend Repo**: [GitHub - Backend](#) *(If backend is separate)*  
-- **Frontend Repo**: [GitHub - Frontend](#) *(If frontend is separate)*  
+- **Live Site**: [GameZone](#)   
+- **Backend Repo**: [GitHub - Backend](#)   
+- **Frontend Repo**: [GitHub - Frontend](#)   
 
 ---
 
@@ -72,7 +72,7 @@ MIT License
 
 
 ## 📞 Contact
-For any queries, reach out to the team at [GameZone](#) *(Add your contact link here)*
+For any queries, reach out to the team at [GameZone](#) 
 ```
 
 ```
@@ -83,4 +83,3 @@ This project is a part of the GameZone. The project is not intended for commerci
 ---
 
 Thank you for visiting! 🚀
->>>>>>> bd7d0e3 (Adding readme file of the gamezone)
