@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Leaderboard = require('../models/Leaderboard');
 
-// Get overall leaderboard
+
 router.get('/overall', async (req, res) => {
   try {
     const leaderboard = await Leaderboard.aggregate([
@@ -23,7 +23,7 @@ router.get('/overall', async (req, res) => {
   }
 });
 
-// Get game-specific leaderboard
+
 router.get('/game/:gameId', async (req, res) => {
   try {
     const leaderboard = await Leaderboard.find({ gameId: req.params.gameId })
@@ -35,7 +35,7 @@ router.get('/game/:gameId', async (req, res) => {
   }
 });
 
-// Update or create player score
+
 router.put('/update', async (req, res) => {
   try {
     const { userId, username, gameId, score } = req.body;
