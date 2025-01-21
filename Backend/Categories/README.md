@@ -60,6 +60,19 @@ All category endpoints support preview mode and similar games recommendations.
 
 ---
 
+### Search
+- `GET /search/global?q=searchTerm` - Search across all categories
+- `GET /search/category/:category?q=searchTerm` - Search within specific category
+
+---
+
+### Leaderboard
+- `GET /leaderboard/overall` - Get overall leaderboard
+- `GET /leaderboard/game/:gameId` - Get game-specific leaderboard
+- `PUT /leaderboard/update` - Update player score
+
+---
+
 ## Response Formats
 
 ### Game Preview Response
@@ -127,6 +140,17 @@ All category endpoints support preview mode and similar games recommendations.
       }
     }
   ]
+}
+```
+
+### Leaderboard Response
+```json
+{
+  "userId": "user123",
+  "username": "Player1",
+  "score": 1000,
+  "gamesPlayed": 10,
+  "totalScore": 5000
 }
 ```
 
