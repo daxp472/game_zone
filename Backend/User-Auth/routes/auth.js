@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 
-// Signup validation middleware
+// Signup
 const signupValidation = [
   body('name').trim().notEmpty().withMessage('Name is required'),
   body('username').trim().notEmpty().withMessage('Username is required'),
@@ -24,7 +24,7 @@ const signupValidation = [
 // Signup route
 router.post('/signup', signupValidation, async (req, res) => {
   try {
-    // Validate request
+    // request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -32,7 +32,7 @@ router.post('/signup', signupValidation, async (req, res) => {
 
     const { name, username, email, password, gender, dob } = req.body;
 
-    // Check if user already exists
+    // Checking if user already exists
     const existingUser = await User.findOne({
       $or: [{ email }, { username }]
     });
