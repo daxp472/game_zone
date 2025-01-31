@@ -32,7 +32,7 @@ GameZone is an engaging platform that brings together multiple game genres, offe
 
 - **Live Site**: [GameZone](#)   
 - **Figma**: [GameZone Design](https://www.figma.com/design/G132E1ohYFA7hwn16abR8p/Game?node-id=0-1&t=w391S8ydiX8bKg6P-1)
-- **API Documentation**: [GameZone API](#)
+- **API Documentation**: [GameZone API](https://documenter.getpostman.com/view/39216571/2sAYX2P4nQ)
 - **Backend Repo**: [GitHub - Backend](https://github.com/codinggita/game_zone/tree/main/Backend)   
 - **Frontend Repo**: [GitHub - Frontend](https://github.com/codinggita/game_zone/tree/main/Frontend)   
 
