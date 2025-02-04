@@ -2,6 +2,7 @@ import React from 'react';
 import LandingNavbar from '../components/LandingNavbar';
 import LandingFooter from '../components/LandingFooter';
 import Ownner from '../assets/ownner.jpeg'
+import Tournament from '../assets/tournament.jpeg'
 
 function AboutUs() {
   return (
@@ -150,7 +151,7 @@ function AboutUs() {
                   <div className="flex flex-col grow items-center px-14 pb-2.5 w-full text-base leading-none text-center bg-black bg-opacity-0 max-md:px-5 max-md:mt-8">
                     <img
                       loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets/a1a2b128ed76445fbc89bb2309e3a04b/868241b3a5ab0250745c19b05f3b6a585a3e2c2db0655d0f8955f4bd3b471fef?apiKey=a1a2b128ed76445fbc89bb2309e3a04b&"
+                      src={Tournament}
                       className="object-contain w-32 max-w-full rounded-full aspect-square"
                       alt="Sarah Johnson"
                     />

@@ -5,7 +5,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import GameHome from './pages/GameHome';
 import Categories from './pages/Categories';
-import CategoryPage from './pages/CategoryPage';
+// import CategoryPage from './pages/category/CategoryPage';
 import NewGames from './pages/NewGames';
 import Popular from './pages/Popular';
 import Tournaments from './pages/Tournaments';
@@ -18,6 +18,13 @@ import HowToPlay from './pages/HowToPlay';
 import ContactUs from './pages/ContactUs';
 import GameDetails from './pages/GameDetails';
 import PrivateRoute from './components/PrivateRoute';
+
+import Racing from "./pages/category/Racing";
+import Action from "./pages/category/Action";
+import Puzzle from "./pages/category/Puzzle";
+import Sports from "./pages/category/Sports";
+import Strategy from "./pages/category/Strategy";
+import Adventure from "./pages/category/Adventure";
 
 function App() {
   return (
@@ -35,7 +42,7 @@ function App() {
             {/* Protected Routes */}
             <Route path="/home" element={<PrivateRoute><GameHome /></PrivateRoute>} />
             <Route path="/categories" element={<PrivateRoute><Categories /></PrivateRoute>} />
-            <Route path="/category/:categoryId" element={<PrivateRoute><CategoryPage /></PrivateRoute>} />
+            {/* <Route path="/category/:category" element={<CategoryPage />} /> */}
             <Route path="/game/:gameId" element={<PrivateRoute><GameDetails /></PrivateRoute>} />
             <Route path="/new-games" element={<PrivateRoute><NewGames /></PrivateRoute>} />
             <Route path="/popular" element={<PrivateRoute><Popular /></PrivateRoute>} />
@@ -44,6 +51,15 @@ function App() {
             <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+
+            {/* Category Pages */}
+            <Route path="/category/racing" element={<Racing />} />
+            <Route path="/category/action" element={<Action />} />
+            <Route path="/category/puzzle" element={<Puzzle />} />
+            <Route path="/category/sports" element={<Sports />} />
+            <Route path="/category/strategy" element={<Strategy />} />
+            <Route path="/category/adventure" element={<Adventure />} />
+
           </Routes>
         </div>
       </ErrorBoundary>

@@ -30,7 +30,7 @@ function LandingPage() {
     },
     {
       title: 'Tactical Force',
-      category: 'FPS',
+      category: 'Action',
       image: 'https://cdn.builder.io/api/v1/image/assets/a1a2b128ed76445fbc89bb2309e3a04b/1cccaba6ae3fd0fd151d0dd6fab14c82602a5844023e1a5a6a7a3dfd571c750f?apiKey=a1a2b128ed76445fbc89bb2309e3a04b&'
     },
     {
@@ -55,10 +55,10 @@ function LandingPage() {
                 Join millions of players worldwide in the most immersive gaming platform. Play, compete, and win!
               </p>
               <div className="flex gap-4 mt-8">
-                <button className="px-8 py-4 text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors">
+                <button className="px-8 py-4 text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors" onClick={() => window.location.href = '/login'}>
                   Play Now
                 </button>
-                <button className="px-8 py-4 text-purple-400 border-2 border-purple-400 rounded-lg hover:bg-purple-400 hover:text-white transition-colors">
+                <button className="px-8 py-4 text-purple-400 border-2 border-purple-400 rounded-lg hover:bg-purple-400 hover:text-white transition-colors" onClick={() => window.location.href = '/about'}>
                   Learn More
                 </button>
               </div>
@@ -115,7 +115,7 @@ function LandingPage() {
           <p className="mt-6 text-xl text-gray-300">
             Join GameZone today and experience gaming at its finest
           </p>
-          <button className="mt-8 px-8 py-4 text-lg text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors">
+          <button className="mt-8 px-8 py-4 text-lg text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors" onClick={() => window.location.href = '/register'}>
             Create Account
           </button>
         </section>
