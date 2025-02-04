@@ -1,59 +1,58 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 
-function GameCard({ game }) {
+function GameCard({ gameId, category }) {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const [game, setGame] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const rating = game.rating?.average || 0;
-  const playerCount = game.players?.count ? `${game.players.count}+ Players` : 'No players yet';
 
-  const handlePlayNow = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      // Since the play count increment endpoint might not be available,
-      // we'll just navigate to the game details page
-      navigate(`/game/${game.id}`);
-    } catch (err) {
-      setError('Unable to start game. Please try again.');
-      console.error('Error starting game:', err);
-    } finally {
-      setIsLoading(false);
-    }
+  useEffect(() => {
+    const fetchGame = async () => {
+      try {
+        const response = await fetch(`https://gamezone-trial.onrender.com/api/${category}/${gameId}`);
+        if (!response.ok) throw new Error('Failed to fetch game data');
+        const data = await response.json();
+        setGame(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchGame();
+  }, [gameId, category]);
+
+  const handlePlayNow = () => {
+    if (game) navigate(`/game/${gameId}`);
   };
+
+  if (isLoading) return <div className="text-white">Loading...</div>;
+  if (error) return <div className="text-red-500">Error: {error}</div>;
+  if (!game) return <div className="text-gray-400">Game not found</div>;
+
+  console.log(gameId, category);
 
   return (
     <div className="bg-[#1a1b26] rounded-lg overflow-hidden shadow-lg transition-transform hover:scale-105">
-      <div 
-        className="cursor-pointer relative"
-        onClick={handlePlayNow}
-      >
-        {/* Thumbnail with fallback */}
+      <div className="cursor-pointer relative" onClick={handlePlayNow}>
         <div className="relative w-full h-48">
           <img 
             src={game.photos?.thumbnail || 'https://via.placeholder.com/400x300?text=Game'} 
-            alt={game.title || 'Game thumbnail'}
+            alt={game.name || 'Game thumbnail'}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/400x300?text=Game';
-            }}
+            onError={(e) => (e.target.src = 'https://via.placeholder.com/400x300?text=Game')}
             loading="lazy"
           />
-          {isLoading && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-            </div>
-          )}
         </div>
 
         <div className="p-4">
-          <h3 className="text-xl text-white font-semibold mb-2">{game.title || 'Untitled Game'}</h3>
+          <h3 className="text-xl text-white font-semibold mb-2 truncate">{game.name || 'Unknown Game'}</h3>
           <div className="flex items-center mb-2">
             <span className="text-yellow-400">★</span>
-            <span className="text-gray-300 ml-1">{rating.toFixed(1)}</span>
-            <span className="text-gray-400 ml-2">{playerCount}</span>
+            <span className="text-gray-300 ml-1">{game.rating?.average?.toFixed(1) || '0.0'}</span>
+            <span className="text-gray-400 ml-2">{game.playCount ? `${game.playCount} players` : 'No players yet'}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="bg-purple-600 text-white text-sm px-2 py-1 rounded">
@@ -64,18 +63,11 @@ function GameCard({ game }) {
                 e.stopPropagation();
                 handlePlayNow();
               }}
-              disabled={isLoading}
-              className={`bg-purple-600 text-white px-4 py-1 rounded hover:bg-purple-700 transition-colors
-                ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className="bg-purple-600 text-white px-4 py-1 rounded hover:bg-purple-700 transition-colors"
             >
-              {isLoading ? 'Loading...' : 'Play Now'}
+              Play Now
             </button>
           </div>
-          {error && (
-            <div className="mt-2 text-red-500 text-sm text-center">
-              {error}
-            </div>
-          )}
         </div>
       </div>
     </div>
