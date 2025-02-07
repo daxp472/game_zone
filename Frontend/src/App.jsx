@@ -26,6 +26,9 @@ import Sports from "./pages/category/Sports";
 import Strategy from "./pages/category/Strategy";
 import Adventure from "./pages/category/Adventure";
 
+import Game2048 from "./pages/Games/2048";
+import GameHangman from "./pages/Games/hangman";
+
 function App() {
   return (
     <Router>
@@ -59,6 +62,10 @@ function App() {
             <Route path="/category/sports" element={<Sports />} />
             <Route path="/category/strategy" element={<Strategy />} />
             <Route path="/category/adventure" element={<Adventure />} />
+
+            {/* Game Pages */}
+            <Route path="/game/game-0" element={<PrivateRoute><Game2048 /></PrivateRoute>} /> 
+            <Route path="/game/game-1" element={<PrivateRoute><GameHangman /></PrivateRoute>} />
 
           </Routes>
         </div>
