@@ -3,10 +3,14 @@ import GameNavbar from '../../components/GameNavbar';
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import LeaderboardSection from '../../components/Leaderboard';
+import { useAuth } from '../../contexts/AuthContext';
+// import jwt_decode from 'jwt-decode';
 
 const Game2048 = () => {
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
+    const [leaderboard, setLeaderboard] = useState([]);
     const navigate = useNavigate();
     const [board, setBoard] = useState(generateBoard());
     const [gameState, setGameState] = useState({
@@ -15,10 +19,58 @@ const Game2048 = () => {
         canContinue: false
     });
     const boardRef = useRef(board);
+    const scoreRef = useRef(score);
+    const BASE_URL = "http://localhost:5000";
 
     useEffect(() => {
         boardRef.current = board;
     }, [board]);
+
+    useEffect(() => {
+        scoreRef.current = score;
+    }, [score]);
+
+    // Get the high score from localStorage on component mount
+    useEffect(() => {
+        const savedHighScore = localStorage.getItem('2048HighScore');
+        if (savedHighScore) {
+            setHighScore(parseInt(savedHighScore));
+        }
+    }, []);
+
+    // Update high score if current score is higher
+    useEffect(() => {
+        if (score > highScore) {
+            setHighScore(score);
+            localStorage.setItem('2048HighScore', score.toString());
+        }
+    }, [score, highScore]);
+
+    // Fetch leaderboard data
+    useEffect(() => {
+        fetchLeaderboard();
+        // Set up polling to update leaderboard every 5 seconds
+        const interval = setInterval(fetchLeaderboard, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const fetchLeaderboard = async () => {
+        try {
+            // Replace with your actual API endpoint
+            const response = await axios.get('${BASE_URL}/api/leaderboard/2048');
+            setLeaderboard(response.data.slice(0, 5)); // Get top 5 scores
+        } catch (error) {
+            console.error("Failed to fetch leaderboard:", error);
+            // Set dummy data for now
+            setLeaderboard([
+                { username: "Player1", score: 24576 },
+                { username: "Player2", score: 16384 },
+                { username: "Player3", score: 8192 },
+                { username: "Player4", score: 4096 },
+                { username: "Player5", score: 2048 }
+            ]);
+        }
+    };
 
     // Prevent default scroll behavior
     useEffect(() => {
@@ -34,16 +86,23 @@ const Game2048 = () => {
         };
     }, []);
 
+    const updateScore = (mergeValue) => {
+        setScore(prevScore => prevScore + mergeValue);
+    };
+
     const handleMove = useCallback((moveFunction) => {
-        const newBoard = moveFunction(boardRef.current);
-        if (!arraysEqual(newBoard, boardRef.current)) {
-            placeRandom(newBoard);
-            setBoard(newBoard);
-            const newScore = calculateScore(newBoard);
-            setScore(newScore);
+        const result = moveFunction(boardRef.current);
+        if (!arraysEqual(result.board, boardRef.current)) {
+            placeRandom(result.board);
+            setBoard(result.board);
+
+            // Update score with the sum of all merged tiles
+            if (result.mergeScore > 0) {
+                setScore(scoreRef.current + result.mergeScore);
+            }
 
             // Check for 2048 tile
-            const hasReached2048 = newBoard.some(row => row.includes(2048));
+            const hasReached2048 = result.board.some(row => row.includes(2048));
             if (hasReached2048 && !gameState.isWon) {
                 setGameState(prev => ({
                     ...prev,
@@ -53,14 +112,32 @@ const Game2048 = () => {
             }
 
             // Check game over
-            if (isGameOver(newBoard)) {
+            if (isGameOver(result.board)) {
                 setGameState(prev => ({
                     ...prev,
                     isOver: true
                 }));
+                // Send score to leaderboard API when game is over
+                sendScoreToLeaderboard(scoreRef.current);
             }
         }
     }, [gameState.isWon]);
+
+    const sendScoreToLeaderboard = async (finalScore) => {
+        try {
+            // Get username from localStorage or prompt user
+            const username = localStorage.getItem('username') || 'Anonymous';
+            // Replace with your actual API endpoint
+            await axios.post('${BASE_URL}/api/leaderboard/2048', {
+                username,
+                score: finalScore
+            });
+            // Refresh leaderboard after submitting new score
+            fetchLeaderboard();
+        } catch (error) {
+            console.error("Failed to send score to leaderboard:", error);
+        }
+    };
 
     const handleKeyDown = useCallback((event) => {
         if (gameState.isOver || (gameState.isWon && !gameState.canContinue)) return;
@@ -97,6 +174,10 @@ const Game2048 = () => {
     };
 
     const handleRestart = () => {
+        // If game was over, send final score before restarting
+        if (gameState.isOver) {
+            sendScoreToLeaderboard(score);
+        }
         setBoard(generateBoard());
         setScore(0);
         setGameState({
@@ -105,13 +186,15 @@ const Game2048 = () => {
             canContinue: false
         });
     };
+    
+    const { user } = useAuth();
 
 
     return (
-        <div className="h-screen bg-gray-100 flex flex-col">
+        <div className="flex flex-col min-h-screen">
             <GameNavbar />
 
-            <div className="container mx-auto p-4 flex-1 overflow-y-auto">
+            <main className="flex-grow container mx-auto px-4 py-6">
                 <div className="flex justify-between items-center mb-6">
                     <button
                         className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
@@ -136,7 +219,7 @@ const Game2048 = () => {
                     {/* Game Board Section */}
                     <div className="flex-1">
                         <div className="bg-white rounded-xl shadow-xl p-6 max-w-md mx-auto">
-                            <h1 className="text-4xl font-bold text-center mb-6 text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text">
+                            <h1 className="text-4xl font-bold text-center mb-6 text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                                 2048
                             </h1>
 
@@ -145,8 +228,8 @@ const Game2048 = () => {
                                     row.map((cell, cellIndex) => (
                                         <div
                                             key={`${rowIndex}-${cellIndex}`}
-                                            className={`cell h-20 w-20 rounded-lg flex items-center justify-center text-2xl font-bold
-                            ${getCellColor(cell)} transition-all duration-150`}
+                                            className={`cell h-16 sm:h-20 w-16 sm:w-20 rounded-lg flex items-center justify-center text-xl sm:text-2xl font-bold
+                                            ${getCellColor(cell)} transition-all duration-150`}
                                         >
                                             {cell > 0 ? cell : ''}
                                         </div>
@@ -191,13 +274,24 @@ const Game2048 = () => {
                                 🏆 Leaderboard
                             </h2>
                             <div className="h-64 overflow-y-auto">
-                                {/* {leaderboardData.map((entry, index) => (
-                      <div key={entry.id} className="flex items-center p-2 hover:bg-gray-50 rounded">
-                        <span className="w-8 text-gray-500 font-medium">#{index + 1}</span>
-                        <span className="flex-1 font-medium">{entry.username}</span>
-                        <span className="text-blue-600 font-bold">{entry.score}</span>
-                      </div>
-                    ))} */} hello world
+                                {/* {fetchLeaderboard.length > 0 ? (
+                                    fetchLeaderboard.map((entry, index) => (
+                                        <div key={index} className="flex items-center p-2 hover:bg-gray-50 rounded">
+                                            <span className="w-8 text-gray-500 font-medium">#{index + 1}</span>
+                                            <span className="flex-1 font-medium">{entry.username}</span>
+                                            <span className="text-blue-600 font-bold">{entry.score.toLocaleString()}</span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-gray-500 italic text-center pt-8">
+                                        Loading leaderboard...
+                                    </div>
+                                )} */}
+                                <LeaderboardSection
+                                    gameId="2048"             
+                                    username={user.username}  
+                                    currentScore={score}  
+                                />
                             </div>
                         </div>
 
@@ -226,7 +320,7 @@ const Game2048 = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
 
             <Footer />
         </div>
@@ -284,12 +378,10 @@ function arraysEqual(a, b) {
     return true;
 }
 
-function calculateScore(board) {
-    return board.flat().reduce((sum, cell) => sum + cell, 0);
-}
-
 function moveUp(board) {
     const newBoard = board.map(row => [...row]);
+    let mergeScore = 0;
+
     for (let col = 0; col < 4; col++) {
         let cells = [];
         for (let row = 0; row < 4; row++) {
@@ -297,17 +389,23 @@ function moveUp(board) {
                 cells.push(newBoard[row][col]);
             }
         }
-        cells = mergeCells(cells);
+
+        const result = mergeCells(cells);
+        cells = result.cells;
+        mergeScore += result.score;
 
         for (let row = 0; row < 4; row++) {
             newBoard[row][col] = cells[row] || 0;
         }
     }
-    return newBoard;
+
+    return { board: newBoard, mergeScore };
 }
 
 function moveDown(board) {
     const newBoard = board.map(row => [...row]);
+    let mergeScore = 0;
+
     for (let col = 0; col < 4; col++) {
         let cells = [];
         for (let row = 3; row >= 0; row--) {
@@ -315,17 +413,23 @@ function moveDown(board) {
                 cells.push(newBoard[row][col]);
             }
         }
-        cells = mergeCells(cells);
+
+        const result = mergeCells(cells);
+        cells = result.cells;
+        mergeScore += result.score;
 
         for (let row = 3; row >= 0; row--) {
             newBoard[row][col] = cells[3 - row] || 0;
         }
     }
-    return newBoard;
+
+    return { board: newBoard, mergeScore };
 }
 
 function moveLeft(board) {
     const newBoard = board.map(row => [...row]);
+    let mergeScore = 0;
+
     for (let row = 0; row < 4; row++) {
         let cells = [];
         for (let col = 0; col < 4; col++) {
@@ -333,17 +437,23 @@ function moveLeft(board) {
                 cells.push(newBoard[row][col]);
             }
         }
-        cells = mergeCells(cells);
+
+        const result = mergeCells(cells);
+        cells = result.cells;
+        mergeScore += result.score;
 
         for (let col = 0; col < 4; col++) {
             newBoard[row][col] = cells[col] || 0;
         }
     }
-    return newBoard;
+
+    return { board: newBoard, mergeScore };
 }
 
 function moveRight(board) {
     const newBoard = board.map(row => [...row]);
+    let mergeScore = 0;
+
     for (let row = 0; row < 4; row++) {
         let cells = [];
         for (let col = 3; col >= 0; col--) {
@@ -351,27 +461,36 @@ function moveRight(board) {
                 cells.push(newBoard[row][col]);
             }
         }
-        cells = mergeCells(cells);
+
+        const result = mergeCells(cells);
+        cells = result.cells;
+        mergeScore += result.score;
 
         for (let col = 3; col >= 0; col--) {
             newBoard[row][col] = cells[3 - col] || 0;
         }
     }
-    return newBoard;
+
+    return { board: newBoard, mergeScore };
 }
 
 function mergeCells(cells) {
     cells = cells.filter(cell => cell !== 0);
+    let score = 0;
+
     for (let i = 0; i < cells.length - 1; i++) {
         if (cells[i] === cells[i + 1]) {
             cells[i] *= 2;
+            score += cells[i]; // Add the merged value to the score
             cells.splice(i + 1, 1);
         }
     }
+
     while (cells.length < 4) {
         cells.push(0);
     }
-    return cells;
+
+    return { cells, score };
 }
 
 function getCellColor(cell) {
@@ -391,7 +510,7 @@ function getCellColor(cell) {
         8192: 'bg-green-800 text-white',
         16384: 'bg-green-900 text-white'
     };
-    return colorMap[cell] || 'bg-white text-black';
+    return colorMap[cell] || 'bg-gray-200 text-gray-400';
 }
 
 export default Game2048;

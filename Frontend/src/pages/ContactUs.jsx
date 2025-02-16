@@ -62,7 +62,7 @@ function ContactUs() {
                 <h2 className="px-16 pt-0.5 pb-2.5 text-xl font-bold text-white max-md:px-5">
                   Email Us
                 </h2>
-                <p className="px-16 py-1.5 mt-2 max-md:px-5">support@gamezone.com</p>
+                <p className="px-16 py-1.5 mt-2 max-md:px-5">gamezonehq123@gmail.com</p>
                 <p className="px-16 py-1 max-md:px-5">info@gamezone.com</p>
               </div>
             </div>
