@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/leaderboard';
+const API_URL = 'https://gamezone-leaderboard.onrender.com/api/leaderboard';
 
 const LeaderboardDisplay = React.forwardRef(({ gameId }, ref) => {
   const [leaderboard, setLeaderboard] = useState([]);
