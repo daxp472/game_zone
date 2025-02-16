@@ -26,6 +26,7 @@ function Home() {
   const [games, setGames] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -51,13 +52,53 @@ function Home() {
     <div className="min-h-screen bg-[#13141f] flex flex-col">
       <GameNavbar />
       <div className="flex-grow">
-        <section className="relative h-[500px]">
-          <img
-            src="https://res.cloudinary.com/dk16ymotz/image/upload/v1736786396/Site%20Images/ta2y8g4oz5qf09rbtwl5.png"
-            alt="Hero Banner"
-            className="w-full h-full object-cover"
-          />
-        </section>
+
+        <div className="relative flex flex-col justify-center min-h-screen bg-gray-900 text-white">
+          <div className="absolute inset-0 z-0">
+            <img
+              src="https://res.cloudinary.com/dk16ymotz/image/upload/v1736786396/Site%20Images/ta2y8g4oz5qf09rbtwl5.png"
+              alt="Gaming background"
+              className="object-cover w-full h-full"
+            />
+            <div className="absolute inset-0 bg-black opacity-50"></div>
+          </div>
+
+          <div className="relative z-10 max-w-4xl mx-auto text-left px-2 pt-4">
+            <h1 className="text-5xl font-bold mb-6 leading-tight">
+              Play Unlimited Games Online
+            </h1>
+            <p className="text-xl mb-8">
+              Join millions of players worldwide and experience the best online games.
+              No downloads required!
+            </p>
+            <div className="flex justify-start space-x-4">
+              <button
+                className={`px-8 py-3 bg-purple-600 rounded-lg font-semibold transition duration-300 ease-in-out ${isHovered ? 'bg-purple-700' : ''
+                  }`}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+              >
+                Play Now
+              </button>
+              <button className="px-8 py-3 bg-gray-700 rounded-lg font-semibold transition duration-300 ease-in-out hover:bg-gray-600">
+                Learn More
+              </button>
+            </div>
+          </div>
+
+
+          <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-8">
+            <button
+              className="animate-bounce bg-white p-2 w-10 h-10 ring-1 ring-slate-900/5 shadow-lg rounded-full flex items-center justify-center"
+              aria-label="Scroll down"
+              onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+            >
+              <svg className="w-6 h-6 text-violet-500" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
 
         <div className="container mx-auto px-4 py-8 flex-grow">
           <h1 className="text-3xl text-white font-bold mb-8">Dashboard Games</h1>
