@@ -28,6 +28,7 @@ import Adventure from "./pages/category/Adventure";
 
 import Game2048 from "./pages/Games/2048";
 import GameHangman from "./pages/Games/hangman";
+import GameXO from "./pages/Games/xo";
 
 function App() {
   return (
@@ -66,6 +67,7 @@ function App() {
             {/* Game Pages */}
             <Route path="/game/game-0" element={<PrivateRoute><Game2048 /></PrivateRoute>} /> 
             <Route path="/game/game-1" element={<PrivateRoute><GameHangman /></PrivateRoute>} />
+            <Route path="/game/game-2" element={<PrivateRoute><GameXO /></PrivateRoute>} />
 
           </Routes>
         </div>
