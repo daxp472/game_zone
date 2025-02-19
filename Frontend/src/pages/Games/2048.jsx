@@ -20,7 +20,7 @@ const Game2048 = () => {
     });
     const boardRef = useRef(board);
     const scoreRef = useRef(score);
-    const BASE_URL = "http://localhost:5000";
+    const BASE_URL = "https://gamezone-leaderboard.onrender.com/api/leaderboard";
 
     useEffect(() => {
         boardRef.current = board;
@@ -57,7 +57,7 @@ const Game2048 = () => {
     const fetchLeaderboard = async () => {
         try {
             // Replace with your actual API endpoint
-            const response = await axios.get('${BASE_URL}/api/leaderboard/2048');
+            const response = await axios.get('${BASE_URL}/2048');
             setLeaderboard(response.data.slice(0, 5)); // Get top 5 scores
         } catch (error) {
             console.error("Failed to fetch leaderboard:", error);
@@ -128,7 +128,7 @@ const Game2048 = () => {
             // Get username from localStorage or prompt user
             const username = localStorage.getItem('username') || 'Anonymous';
             // Replace with your actual API endpoint
-            await axios.post('${BASE_URL}/api/leaderboard/2048', {
+            await axios.post(`${BASE_URL}/2048`, {
                 username,
                 score: finalScore
             });

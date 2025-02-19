@@ -81,20 +81,19 @@ const LeaderboardSection = ({ gameId, username, currentScore }) => {
   }, [gameId]);
 
   const submitScore = async () => {
-    if (currentScore <= lastSubmittedScore || currentScore <= highestScore) return; // Skip if score is not higher
-
     try {
       const response = await axios.get(`${API_URL}/${gameId}`);
-      const highestScoreInDB = response.data.scores.length > 0 ? response.data.scores[0].score : 0;
+      const userScore = response.data.scores.find(s => s.username === username)?.score || 0;
 
-      if (currentScore > highestScoreInDB) {
+      if (currentScore > lastSubmittedScore && currentScore > userScore) {
         await axios.post(`${API_URL}/${gameId}`, { username, score: currentScore });
         setLastSubmittedScore(currentScore);
         setSubmissionStatus({ type: 'success', message: 'New high score submitted!' });
         leaderboardRef.current?.fetchLeaderboard();
       }
     } catch (err) {
-      setSubmissionStatus({ type: 'error', message: 'Failed to submit score' });
+      console.error("Error submitting score:", err);
+      setSubmissionStatus({ type: 'error', message: 'Server error. Try again later.' });
     }
   };
 
