@@ -158,7 +158,7 @@ const GameHangman = () => {
                 <div className="w-full flex justify-between items-center mb-5">
                     <button
                         className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
-                        onClick={() => navigate('/')}
+                        onClick={() => navigate(-1)}
                     >
                         ← Back to Menu
                     </button>
