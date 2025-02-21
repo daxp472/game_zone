@@ -4,8 +4,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
+const { sendWelcomeEmail } = require('../utils/emailService');
 
-// Signup
+// Signup validation middleware
 const signupValidation = [
   body('name').trim().notEmpty().withMessage('Name is required'),
   body('username').trim().notEmpty().withMessage('Username is required'),
@@ -24,7 +25,7 @@ const signupValidation = [
 // Signup route
 router.post('/signup', signupValidation, async (req, res) => {
   try {
-    // request
+    // Validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -32,7 +33,7 @@ router.post('/signup', signupValidation, async (req, res) => {
 
     const { name, username, email, password, gender, dob } = req.body;
 
-    // Checking if user already exists
+    // Check if user already exists
     const existingUser = await User.findOne({
       $or: [{ email }, { username }]
     });
@@ -65,6 +66,14 @@ router.post('/signup', signupValidation, async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
+
+    // Send welcome email
+    try {
+      await sendWelcomeEmail(user.email, user.name);
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
+      // Continue with the response even if email fails
+    }
 
     res.status(201).json({
       message: 'User created successfully',
