@@ -11,6 +11,10 @@ import Popular from './pages/Popular';
 import Tournaments from './pages/Tournaments';
 import Multiplayer from './pages/Multiplayer';
 import Leaderboard from './pages/Leaderboard';
+
+import TournamentPage from './pages/TournamentPage';
+import TournamentDetails from './components/tournaments/TournamentDetails';
+
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import AboutUs from './pages/AboutUs';
@@ -50,11 +54,18 @@ function App() {
             <Route path="/game/:gameId" element={<PrivateRoute><GameDetails /></PrivateRoute>} />
             <Route path="/new-games" element={<PrivateRoute><NewGames /></PrivateRoute>} />
             <Route path="/popular" element={<PrivateRoute><Popular /></PrivateRoute>} />
-            <Route path="/tournaments" element={<PrivateRoute><Tournaments /></PrivateRoute>} />
+
+            {/* Tournaments */}
+            {/* <Route path="/tournaments" element={<PrivateRoute><Tournaments /></PrivateRoute>} /> */}
+            <Route path="/tournaments" element={<PrivateRoute><TournamentPage /></PrivateRoute>} />
+            <Route path="/tournament/:id" element={<PrivateRoute><TournamentDetails /></PrivateRoute>} />
+
+
             <Route path="/multiplayer" element={<PrivateRoute><Multiplayer /></PrivateRoute>} />
             <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+
 
             {/* Category Pages */}
             <Route path="/category/racing" element={<Racing />} />
@@ -63,6 +74,7 @@ function App() {
             <Route path="/category/sports" element={<Sports />} />
             <Route path="/category/strategy" element={<Strategy />} />
             <Route path="/category/adventure" element={<Adventure />} />
+
 
             {/* Game Pages */}
             <Route path="/game/game-0" element={<PrivateRoute><Game2048 /></PrivateRoute>} /> 
