@@ -17,7 +17,7 @@ import TournamentDetails from './components/tournaments/TournamentDetails';
 import CreateTournament from './pages/Tournament/CreateRoomPage';
 import RoomMangePage from './pages/Tournament/ManageRoomPage';
 
-import Profile from './pages/Profile';
+import Profile from './pages/Profile/Profile';
 import Settings from './pages/Settings';
 import AboutUs from './pages/AboutUs';
 import HowToPlay from './pages/HowToPlay';
