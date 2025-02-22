@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import GameNavbar from '../../components/GameNavbar';
 import ProfileSidebar from '../../components/Profile/Profile-Sidebar';
@@ -9,6 +9,7 @@ import axios from 'axios';
 
 function Settings() {
     const { user } = useAuth();
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: user?.name || '',
         username: user?.username || '',
@@ -18,20 +19,6 @@ function Settings() {
         bio: user?.bio || '',
     });
     const [message, setMessage] = useState({ type: '', text: '' });
-    
-
-    useEffect(() => {
-        if (user) {
-            setFormData({
-                name: user.name,
-                username: user.username,
-                email: user.email,
-                profilePicture: user.profilePicture,
-                dob: user.dob,
-                bio: user.bio,
-            });
-        }
-    }, [user]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,9 +26,11 @@ function Settings() {
 
     const handleProfileUpdate = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
-            const response = await axios.patch(
-                'https://user-auth-76vd.onrender.com/api/auth/profile',
+            const token = localStorage.getItem('token');
+            await axios.patch(
+                `https://user-auth-76vd.onrender.com/api/auth/profile`,
                 {
                     name: formData.name,
                     username: formData.username,
@@ -52,7 +41,7 @@ function Settings() {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${user.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
             );
@@ -61,6 +50,7 @@ function Settings() {
             setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to update profile' });
         }
     };
+
 
     const calculateAge = (dob) => {
         const birthDate = new Date(dob);
@@ -72,7 +62,6 @@ function Settings() {
         }
         return age;
     };
-    console.log(user.token);
 
     return (
         <div className="min-h-screen bg-gray-900 text-white">
@@ -88,6 +77,8 @@ function Settings() {
                             {message.text}
                         </div>
                     )}
+
+
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
@@ -160,6 +151,7 @@ function Settings() {
                                     ></textarea>
                                     <p className="text-sm text-gray-500 mt-1">{formData.bio.length}/500 characters</p>
                                 </div>
+                                
                                 <button
                                     type="submit"
                                     className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700"
