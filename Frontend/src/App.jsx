@@ -18,7 +18,14 @@ import CreateTournament from './pages/Tournament/CreateRoomPage';
 import RoomMangePage from './pages/Tournament/ManageRoomPage';
 
 import Profile from './pages/Profile/Profile';
-import Settings from './pages/Settings';
+import Subscription from './pages/Profile/Subscription';
+import ReferAndEarn from './pages/Profile/ReferAndEarn';
+import Notifications from './pages/Profile/Notifications';
+import GlobalPerformance from './pages/Profile/GlobalPerformance';
+import Settings1 from './pages/Profile/Settings';
+// import Settings from './pages/Settings';
+
+
 import AboutUs from './pages/AboutUs';
 import HowToPlay from './pages/HowToPlay';
 import ContactUs from './pages/ContactUs';
@@ -68,8 +75,15 @@ function App() {
 
             <Route path="/multiplayer" element={<PrivateRoute><Multiplayer /></PrivateRoute>} />
             <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
+
+
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-            <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+            <Route path="/profile/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />
+            <Route path="/profile/referral" element={<PrivateRoute><ReferAndEarn /></PrivateRoute>} />
+            <Route path="/profile/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+            <Route path="/profile/global-performance" element={<PrivateRoute><GlobalPerformance /></PrivateRoute>} />
+            <Route path="/profile/settings" element={<PrivateRoute><Settings1 /></PrivateRoute>} />
+            {/* <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> */}
 
 
             {/* Category Pages */}
