@@ -12,10 +12,12 @@ import Tournaments from './pages/Tournaments';
 import Multiplayer from './pages/Multiplayer';
 import Leaderboard from './pages/Leaderboard';
 
-import TournamentPage from './pages/TournamentPage';
+import TournamentPage from './pages/Tournament/TournamentPage';
 import TournamentDetails from './components/tournaments/TournamentDetails';
+import CreateTournament from './pages/Tournament/CreateRoomPage';
+import RoomMangePage from './pages/Tournament/ManageRoomPage';
 
-import Profile from './pages/Profile';
+import Profile from './pages/Profile/Profile';
 import Settings from './pages/Settings';
 import AboutUs from './pages/AboutUs';
 import HowToPlay from './pages/HowToPlay';
@@ -33,6 +35,7 @@ import Adventure from "./pages/category/Adventure";
 import Game2048 from "./pages/Games/2048";
 import GameHangman from "./pages/Games/hangman";
 import GameXO from "./pages/Games/xo";
+import GameFlappy from "./pages/Games/Flappy-bird"
 
 function App() {
   return (
@@ -59,6 +62,8 @@ function App() {
             {/* <Route path="/tournaments" element={<PrivateRoute><Tournaments /></PrivateRoute>} /> */}
             <Route path="/tournaments" element={<PrivateRoute><TournamentPage /></PrivateRoute>} />
             <Route path="/tournament/:id" element={<PrivateRoute><TournamentDetails /></PrivateRoute>} />
+            <Route path="/tournaments/create-room" element={<PrivateRoute><CreateTournament /></PrivateRoute>} />
+            <Route path="/tournaments/manage-room/:roomId" element={<PrivateRoute><RoomMangePage /></PrivateRoute>} />
 
 
             <Route path="/multiplayer" element={<PrivateRoute><Multiplayer /></PrivateRoute>} />
@@ -80,6 +85,7 @@ function App() {
             <Route path="/game/game-0" element={<PrivateRoute><Game2048 /></PrivateRoute>} /> 
             <Route path="/game/game-1" element={<PrivateRoute><GameHangman /></PrivateRoute>} />
             <Route path="/game/game-2" element={<PrivateRoute><GameXO /></PrivateRoute>} />
+            <Route path="/game/game-3" element={<PrivateRoute><GameFlappy /></PrivateRoute>} />
 
           </Routes>
         </div>
