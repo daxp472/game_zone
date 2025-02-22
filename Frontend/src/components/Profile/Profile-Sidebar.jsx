@@ -13,7 +13,7 @@ const ProfileSidebar = () => {
             <nav className="flex-grow">
                 <ul className="space-y-2 p-4">
                     <li>
-                        <Link to="/profile/details" className={`flex items-center p-2 rounded-md hover:bg-gray-700 ${location.pathname === '/profile/details' ? 'bg-gray-700' : ''}`}>
+                        <Link to="/profile" className={`flex items-center p-2 rounded-md hover:bg-gray-700 ${location.pathname === '/profile/details' ? 'bg-gray-700' : ''}`}>
                             <FaUser className="mr-2" /> Personal Details
                         </Link>
                     </li>

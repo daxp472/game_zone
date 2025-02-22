@@ -18,7 +18,10 @@ import CreateTournament from './pages/Tournament/CreateRoomPage';
 import RoomMangePage from './pages/Tournament/ManageRoomPage';
 
 import Profile from './pages/Profile/Profile';
+import Subscription from './pages/Profile/Subscription';
 import Settings from './pages/Settings';
+
+
 import AboutUs from './pages/AboutUs';
 import HowToPlay from './pages/HowToPlay';
 import ContactUs from './pages/ContactUs';
@@ -68,7 +71,10 @@ function App() {
 
             <Route path="/multiplayer" element={<PrivateRoute><Multiplayer /></PrivateRoute>} />
             <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
+
+
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+            <Route path="/profile/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
 
 

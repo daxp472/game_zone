@@ -16,10 +16,10 @@ const Profile = () => {
     return (
         <div className="min-h-screen bg-gray-900 text-white">
             <GameNavbar />
+            <ProfileHeader />
             <div className="flex ml-5 mt-5">
                 <ProfileSidebar />
                 <main className="flex-grow p-6 mt-5 ml-10">
-                    <ProfileHeader />
                     <ProfileStats stats={stats} />
                     <ProfileDetails />
                 </main>
