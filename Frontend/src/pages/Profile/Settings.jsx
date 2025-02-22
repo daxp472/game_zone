@@ -4,7 +4,7 @@ import GameNavbar from '../../components/GameNavbar';
 import ProfileSidebar from '../../components/Profile/Profile-Sidebar';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
 import Footer from '../../components/Footer';
-import PasswordSettings from '../../components/Profile/UpdatePassword';
+import PasswordSettings from './UpdatePassword';
 import axios from 'axios';
 
 function Settings() {
@@ -49,8 +49,8 @@ function Settings() {
         } catch (error) {
             setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to update profile' });
         }
+        setLoading(false);
     };
-
 
     const calculateAge = (dob) => {
         const birthDate = new Date(dob);
@@ -63,12 +63,20 @@ function Settings() {
         return age;
     };
 
+    const handlePasswordUpdate = (passwordData) => {
+        // Handle the password update action within the Settings component
+        console.log('Password updated:', passwordData);
+        setMessage({ type: 'success', text: 'Password updated successfully!' });
+    };
+
     return (
         <div className="min-h-screen bg-gray-900 text-white">
             <GameNavbar />
             <ProfileHeader />
-            <div className="flex">
+            <div className="flex mt-5 ml-5">
+                <div>
                 <ProfileSidebar />
+                </div>
                 <div className="flex-grow container mx-auto px-4 py-8">
                     <h1 className="text-3xl font-bold mb-8">Settings</h1>
 
@@ -77,8 +85,6 @@ function Settings() {
                             {message.text}
                         </div>
                     )}
-
-
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
@@ -161,7 +167,7 @@ function Settings() {
                             </form>
                         </div>
 
-                        <PasswordSettings user={user} />
+                        <PasswordSettings user={user} onPasswordUpdate={handlePasswordUpdate} />
 
                     </div>
                 </div>

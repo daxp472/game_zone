@@ -23,6 +23,7 @@ import ReferAndEarn from './pages/Profile/ReferAndEarn';
 import Notifications from './pages/Profile/Notifications';
 import GlobalPerformance from './pages/Profile/GlobalPerformance';
 import Settings1 from './pages/Profile/Settings';
+import ForgotPassword from './pages/Profile/UpdatePassword';
 // import Settings from './pages/Settings';
 
 
@@ -83,6 +84,7 @@ function App() {
             <Route path="/profile/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
             <Route path="/profile/global-performance" element={<PrivateRoute><GlobalPerformance /></PrivateRoute>} />
             <Route path="/profile/settings" element={<PrivateRoute><Settings1 /></PrivateRoute>} />
+<Route path="/profile/:username/settings/forgot-password" element={<PrivateRoute><ForgotPassword /></PrivateRoute>} />
             {/* <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> */}
 
 

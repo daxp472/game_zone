@@ -10,14 +10,16 @@ const ProfileHeader = () => {
     return (
         <div className="bg-gray-800 p-4 rounded-lg mt-4 ml-4 flex items-center justify-between">
             <div className="relative flex items-center">
-                <img
-                    className="w-16 h-16 rounded-full"
-                    src={user.profilePicture}
-                    alt={user.username}
-                />
-                <button className="absolute bottom-0 right-0 bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600">
-                    <FaCamera />
-                </button>
+                <div className="relative flex items-center">
+                    <img
+                        className="w-16 h-16 rounded-full"
+                        src={user.profilePicture}
+                        alt={user.username}
+                    />
+                    <button className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600">
+                        <FaCamera />
+                    </button>
+                </div>
                 <div className="ml-6">
                     <h2 className="text-xl font-bold">{user.name}</h2>
                     <p className="text-gray-400">@{user.username}</p>
