@@ -19,6 +19,7 @@ import RoomMangePage from './pages/Tournament/ManageRoomPage';
 
 import Profile from './pages/Profile/Profile';
 import Subscription from './pages/Profile/Subscription';
+import ReferAndEarn from './pages/Profile/ReferAndEarn';
 import Settings from './pages/Settings';
 
 
@@ -75,6 +76,7 @@ function App() {
 
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path="/profile/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />
+            <Route path="/profile/referral" element={<PrivateRoute><ReferAndEarn /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
 
 
