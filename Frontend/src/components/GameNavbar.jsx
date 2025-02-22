@@ -68,7 +68,7 @@ function GameNavbar() {
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-[#2a2b36] rounded-md shadow-lg py-1">
                   <Link to="/profile" className="block px-4 py-2 text-sm text-gray-300 hover:bg-purple-600">Profile</Link>
-                  <Link to="/settings" className="block px-4 py-2 text-sm text-gray-300 hover:bg-purple-600">Settings</Link>
+                  <Link to="/profile/settings" className="block px-4 py-2 text-sm text-gray-300 hover:bg-purple-600">Settings</Link>
                   <button 
                     onClick={logout}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-purple-600"

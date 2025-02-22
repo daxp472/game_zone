@@ -22,7 +22,8 @@ import Subscription from './pages/Profile/Subscription';
 import ReferAndEarn from './pages/Profile/ReferAndEarn';
 import Notifications from './pages/Profile/Notifications';
 import GlobalPerformance from './pages/Profile/GlobalPerformance';
-import Settings from './pages/Settings';
+import Settings1 from './pages/Profile/Settings';
+// import Settings from './pages/Settings';
 
 
 import AboutUs from './pages/AboutUs';
@@ -81,7 +82,8 @@ function App() {
             <Route path="/profile/referral" element={<PrivateRoute><ReferAndEarn /></PrivateRoute>} />
             <Route path="/profile/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
             <Route path="/profile/global-performance" element={<PrivateRoute><GlobalPerformance /></PrivateRoute>} />
-            <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+            <Route path="/profile/settings" element={<PrivateRoute><Settings1 /></PrivateRoute>} />
+            {/* <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> */}
 
 
             {/* Category Pages */}
