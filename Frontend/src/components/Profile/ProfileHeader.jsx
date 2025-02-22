@@ -1,11 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { FaCamera } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import ImageSelectionModal from './ImageSelectionModal';  // Import the modal component
 
 const ProfileHeader = () => {
-    const { user } = useAuth();
+    const { user, setUser } = useAuth();
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const images = [
+        'https://imgv3.fotor.com/images/homepage-feature-card/Random-image-generator_5.jpg',
+        'https://th.bing.com/th/id/R.a8b73b08a0354a706f00d3f24dee7378?rik=NWjjYn0emvfGOg&riu=http%3a%2f%2fhdqwalls.com%2fdownload%2f1%2fcolorful-parrot-bird.jpg&ehk=TueFyYK%2fTrLpzkimOSJEWLrgPGU%2fv%2bwcWxmK%2bdIZftk%3d&risl=&pid=ImgRaw&r=0',
+        
+    ];
+
+    const handleImageSelect = (image) => {
+        setUser({ ...user, profilePicture: image });
+    };
 
     return (
         <div className="bg-gray-800 p-4 rounded-lg mt-4 ml-4 flex items-center justify-between">
@@ -16,7 +28,10 @@ const ProfileHeader = () => {
                         src={user.profilePicture}
                         alt={user.username}
                     />
-                    <button className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600">
+                    <button
+                        className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600"
+                        onClick={() => setIsModalOpen(true)}
+                    >
                         <FaCamera />
                     </button>
                 </div>
@@ -32,6 +47,13 @@ const ProfileHeader = () => {
             >
                 Edit Profile
             </button>
+            {isModalOpen && (
+                <ImageSelectionModal
+                    images={images}
+                    onClose={() => setIsModalOpen(false)}
+                    onSelectImage={handleImageSelect}
+                />
+            )}
         </div>
     );
 };
