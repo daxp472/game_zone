@@ -58,7 +58,19 @@ const FlappyBird = () => {
                         <h2 className="text-xl font-semibold">Launch Date</h2>
                         <p className="text-lg">25th February 2025, 9:00 AM</p>
                     </div>
-                    <Leaderboard className="flex-1 m-2" />
+
+                    <div className="bg-white rounded-xl shadow-xl p-6">
+                            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+                                🏆 Leaderboard
+                            </h2>
+                            <div className="h-20 overflow-y-auto">
+                                <Leaderboard
+                                    gameId="Flappy-Bird"             
+                                    username={user.username}  
+                                    // currentScore={score}  
+                                />
+                            </div>
+                        </div>
                 </div>
 
                 <div className="mr-5 pr-10">
