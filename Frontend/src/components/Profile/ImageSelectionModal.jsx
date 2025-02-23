@@ -1,26 +1,9 @@
 import React from 'react';
 import { FaTimes } from 'react-icons/fa';
-import axios from 'axios';
 
-const ImageSelectionModal = ({ images, onClose, onSelectImage }) => {
-    const handleImageSelect = async (image) => {
-        try {
-            const token = localStorage.getItem('token');
-            await axios.post(
-                'https://your-api-endpoint.com/api/auth/update-profile-picture',
-                { profilePicture: image },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-            onSelectImage(image);
-            onClose();
-        } catch (error) {
-            console.error('Failed to update profile picture', error);
-        }
+const ImageSelectionModal = ({ images, selectedImage, onClose, onSelectImage, onSetImage }) => {
+    const handleImageSelect = (image) => {
+        onSelectImage(image);
     };
 
     return (
@@ -30,20 +13,27 @@ const ImageSelectionModal = ({ images, onClose, onSelectImage }) => {
                     <FaTimes />
                 </button>
                 <h2 className="text-xl font-bold mb-4 text-white">Select Profile Picture</h2>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-4 gap-4">
                     {images.map((image, index) => (
                         <img
                             key={index}
                             src={image}
                             alt="Profile Option"
-                            className="w-24 h-24 rounded-full cursor-pointer"
+                            className={`w-24 h-24 rounded-full cursor-pointer ${selectedImage === image ? 'border-4 border-green-500' : ''}`}
                             onClick={() => handleImageSelect(image)}
                         />
                     ))}
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 flex justify-end">
                     <button
-                        className="bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 mr-2"
+                        className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 mr-2"
+                        onClick={onSetImage}
+                        disabled={!selectedImage}
+                    >
+                        Set Image
+                    </button>
+                    <button
+                        className="bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700"
                         onClick={onClose}
                     >
                         Cancel

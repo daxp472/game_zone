@@ -2,21 +2,59 @@ import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { FaCamera } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import ImageSelectionModal from './ImageSelectionModal';  // Import the modal component
+import ImageSelectionModal from './ImageSelectionModal';
+import axios from 'axios';
 
 const ProfileHeader = () => {
     const { user, setUser } = useAuth();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     const images = [
-        'https://imgv3.fotor.com/images/homepage-feature-card/Random-image-generator_5.jpg',
-        'https://th.bing.com/th/id/R.a8b73b08a0354a706f00d3f24dee7378?rik=NWjjYn0emvfGOg&riu=http%3a%2f%2fhdqwalls.com%2fdownload%2f1%2fcolorful-parrot-bird.jpg&ehk=TueFyYK%2fTrLpzkimOSJEWLrgPGU%2fv%2bwcWxmK%2bdIZftk%3d&risl=&pid=ImgRaw&r=0',
-        
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302380/images_idrluf.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302337/images_ervcsc.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302296/images_qjfuo0.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302287/images_wbqnpd.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302267/images_iyyd6w.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302256/images_onsw4x.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302244/images_sr9sn7.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302227/images_b1tmda.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302224/images_menj8s.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302189/images_rrj7om.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302178/images_kzjgki.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302169/download_hmk4qp.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302157/download_zti3bm.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302146/download_razvfe.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302134/download_dvpvh4.jpg",
+        "https://res.cloudinary.com/dk16ymotz/image/upload/v1740302086/download_djnukr.jpg",
     ];
 
     const handleImageSelect = (image) => {
-        setUser({ ...user, profilePicture: image });
+        setSelectedImage(image);
+    };
+
+    const handleSetImage = async () => {
+        if (selectedImage) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.patch(
+                    'https://user-auth-76vd.onrender.com/api/auth/profile',
+                    { profilePicture: selectedImage },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+                const updatedUser = response.data.user;
+                setUser(updatedUser);
+                setIsModalOpen(false);
+            } catch (error) {
+                console.error('Failed to update profile picture', error);
+            }
+        }
     };
 
     return (
@@ -50,8 +88,10 @@ const ProfileHeader = () => {
             {isModalOpen && (
                 <ImageSelectionModal
                     images={images}
+                    selectedImage={selectedImage}
                     onClose={() => setIsModalOpen(false)}
                     onSelectImage={handleImageSelect}
+                    onSetImage={handleSetImage}
                 />
             )}
         </div>
