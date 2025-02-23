@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import GameNavbar from '../../components/GameNavbar';
 import ProfileSidebar from '../../components/Profile/Profile-Sidebar';
 import ProfileHeader from '../../components/Profile/ProfileHeader';
 import Footer from '../../components/Footer';
-import PasswordSettings from '../../components/Profile/UpdatePassword';
+import PasswordSettings from './UpdatePassword';
 import axios from 'axios';
 
 function Settings() {
     const { user } = useAuth();
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: user?.name || '',
         username: user?.username || '',
@@ -18,20 +19,6 @@ function Settings() {
         bio: user?.bio || '',
     });
     const [message, setMessage] = useState({ type: '', text: '' });
-    
-
-    useEffect(() => {
-        if (user) {
-            setFormData({
-                name: user.name,
-                username: user.username,
-                email: user.email,
-                profilePicture: user.profilePicture,
-                dob: user.dob,
-                bio: user.bio,
-            });
-        }
-    }, [user]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,9 +26,11 @@ function Settings() {
 
     const handleProfileUpdate = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
-            const response = await axios.patch(
-                'https://user-auth-76vd.onrender.com/api/auth/profile',
+            const token = localStorage.getItem('token');
+            await axios.patch(
+                `https://user-auth-76vd.onrender.com/api/auth/profile`,
                 {
                     name: formData.name,
                     username: formData.username,
@@ -52,7 +41,7 @@ function Settings() {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${user.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
             );
@@ -60,6 +49,7 @@ function Settings() {
         } catch (error) {
             setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to update profile' });
         }
+        setLoading(false);
     };
 
     const calculateAge = (dob) => {
@@ -72,14 +62,21 @@ function Settings() {
         }
         return age;
     };
-    console.log(user.token);
+
+    const handlePasswordUpdate = (passwordData) => {
+        // Handle the password update action within the Settings component
+        console.log('Password updated:', passwordData);
+        setMessage({ type: 'success', text: 'Password updated successfully!' });
+    };
 
     return (
         <div className="min-h-screen bg-gray-900 text-white">
             <GameNavbar />
             <ProfileHeader />
-            <div className="flex">
+            <div className="flex mt-5 ml-5">
+                <div>
                 <ProfileSidebar />
+                </div>
                 <div className="flex-grow container mx-auto px-4 py-8">
                     <h1 className="text-3xl font-bold mb-8">Settings</h1>
 
@@ -160,6 +157,7 @@ function Settings() {
                                     ></textarea>
                                     <p className="text-sm text-gray-500 mt-1">{formData.bio.length}/500 characters</p>
                                 </div>
+                                
                                 <button
                                     type="submit"
                                     className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700"
@@ -169,7 +167,7 @@ function Settings() {
                             </form>
                         </div>
 
-                        <PasswordSettings user={user} />
+                        <PasswordSettings user={user} onPasswordUpdate={handlePasswordUpdate} />
 
                     </div>
                 </div>

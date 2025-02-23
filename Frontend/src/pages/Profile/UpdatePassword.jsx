@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const UpdatePassword = ({ setMessage }) => {
@@ -74,6 +75,11 @@ const UpdatePassword = ({ setMessage }) => {
                         onChange={handleChange}
                         className="w-full bg-gray-700 text-white p-2 rounded-md"
                     />
+                </div>
+                <div className="text-red-500 text-sm">
+                    <Link to={`/profile/${user.username}/settings/forgot-password`} className="hover:underline">
+                        Forgot your password?
+                    </Link>
                 </div>
                 <button
                     type="submit"
