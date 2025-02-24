@@ -1,5 +1,5 @@
-import GameNavbar from '../components/GameNavbar';
-import Footer from '../components/Footer';
+import GameNavbar from '../../components/GameNavbar';
+import Footer from '../../components/Footer';
 
 function Leaderboard() {
   const players = [
