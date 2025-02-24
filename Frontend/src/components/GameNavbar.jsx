@@ -44,13 +44,13 @@ function GameNavbar() {
 
   return (
     <div className="flex">
-      <div className='position-fixed z-10 overflow-hidden'>
+      <div className='fixed z-10 overflow-hidden'>
       {!hiddenSidebarRoutes.includes(location.pathname) && <Sidebar />}
       </div>
       <nav className={`bg-[#1a1b26] p-4 fixed top-0 w-full z-50 ${!hiddenSidebarRoutes.includes(location.pathname) ? 'ml-16' : ''}`}>
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-6">
-            <Link to="/home" className="text-purple-500 text-2xl font-bold whitespace-nowrap">GameZone</Link>
+            <Link to="/home" className="text-purple-500 text-2xl font-bold whitespace-nowrap -ml-20 mr-6">GameZone</Link>
             <div className="hidden md:flex items-center space-x-6">
               <Link to="/home" className="text-gray-300 hover:text-purple-500">Home</Link>
               <Link to="/categories" className="text-gray-300 hover:text-purple-500">Categories</Link>
@@ -64,7 +64,7 @@ function GameNavbar() {
             <input
               type="text"
               placeholder="Search games..."
-              className="bg-[#2a2b36] text-gray-300 px-4 py-1 ml-5 rounded-md"
+              className="bg-[#2a2b36] text-gray-300 px-4 py-1 rounded-md"
             />
             <div className="flex items-center space-x-3">
               <div className="relative" ref={dropdownRef}>

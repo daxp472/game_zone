@@ -10,7 +10,11 @@ import NewGames from './pages/NewGames';
 import Popular from './pages/Popular';
 import Tournaments from './pages/Tournaments';
 import Multiplayer from './pages/Multiplayer';
-import Leaderboard from './pages/Leaderboard';
+
+
+import Leaderboard from './pages/Main-Sidebar/Leaderboard';
+import CoinStore from './pages/Main-Sidebar/CoinStore';
+
 
 import TournamentPage from './pages/Tournament/TournamentPage';
 import TournamentDetails from './components/tournaments/TournamentDetails';
@@ -75,8 +79,13 @@ function App() {
 
 
             <Route path="/multiplayer" element={<PrivateRoute><Multiplayer /></PrivateRoute>} />
-            <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
 
+
+
+            <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
+            <Route path="/store" element={<PrivateRoute><CoinStore /></PrivateRoute>} />
+
+            
 
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path="/profile/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />
