@@ -14,6 +14,7 @@ import Multiplayer from './pages/Multiplayer';
 
 import Leaderboard from './pages/Main-Sidebar/Leaderboard';
 import Store from './pages/Main-Sidebar/Store';
+import DailyChallenges from './pages/Main-Sidebar/DailyChallenges';
 import Friends from './pages/Main-Sidebar/Friends';
 import Support from './pages/Main-Sidebar/Support';
 import Achievements from './pages/Main-Sidebar/Achievements';
@@ -88,6 +89,7 @@ function App() {
 
             <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
             <Route path="/store" element={<PrivateRoute><Store /></PrivateRoute>} />
+            <Route path="/challenges" element={<PrivateRoute><DailyChallenges /></PrivateRoute>} />
             <Route path="/friends" element={<PrivateRoute><Friends /></PrivateRoute>} />
             <Route path="/support" element={<PrivateRoute><Support /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><SiteSettings /></PrivateRoute>} />
