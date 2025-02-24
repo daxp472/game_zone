@@ -91,9 +91,9 @@ const XOGame = () => {
     };
 
     return (
-        <div className="flex flex-col items-center mt-10 p-0">
+        <div className="flex flex-col mt-10 p-0">
             <GameNavbar />
-            <div className="flex w-full max-w-6xl">
+            <div className="flex ml-20 w-full max-w-6xl">
                 {/* Left Section */}
                 <div className="w-1/5 flex flex-col items-start p-4">
                     <button

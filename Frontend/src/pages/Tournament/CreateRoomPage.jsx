@@ -56,7 +56,7 @@ function CreateRoomPage() {
                 }
             }
         };
-        
+
         fetchRoomCardCount();
     }, [user.username]);
 
@@ -152,51 +152,53 @@ function CreateRoomPage() {
     console.log(user.username);
 
     return (
-        <div className="min-h-screen bg-[#13141f] flex flex-col items-center text-white">
+        <div className="min-h-screen bg-[#13141f] flex flex-col text-white">
             <GameNavbar />
-            <div className="flex justify-between w-full m-5 p-4">
-                <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
-                    onClick={() => navigate(-1)}
-                >
-                    ← Back to Menu
-                </button>
-                <button className="bg-gradient-to-r from-purple-500 to-pink-500 py-2 rounded-md hover:from-purple-700 hover:to-pink-700">
-                    Available Room Card Count: {roomCardCount}
-                </button>
-            </div>
-            <h1 className="text-3xl font-bold my-4">Create Room</h1>
-            <div className="bg-[#1a1b26] p-6 rounded-lg w-96 shadow-md">
-                <InputField label="Room Name" type="text" value={roomSettings.roomName} onChange={handleInputChange} name="roomName" />
-                <InputField label="Max Players" type="number" value={roomSettings.maxPlayers} onChange={handleInputChange} name="maxPlayers" />
-                <div className="mb-4">
-                    <label className="block mb-2">Type</label>
-                    <select className="w-full p-2 bg-gray-800 text-white rounded-md" name="type" value={roomSettings.type} onChange={handleInputChange}>
-                        <option value="public">Public</option>
-                        <option value="private">Private</option>
-                    </select>
-                </div>
-                {roomSettings.type === 'private' && (
-                    <InputField label="Password" type="password" value={roomSettings.password} onChange={handleInputChange} name="password" />
-                )}
-                <div className="flex justify-between mt-4">
-                    <button onClick={handleCreateRoom} className="bg-green-600 w-1/2 py-2 rounded-md hover:bg-green-700">
-                        Create Room
+            <div className='flex flex-col items-center ml-20'>
+                <div className="flex justify-between w-full m-5 p-4">
+                    <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
+                        onClick={() => navigate(-1)}
+                    >
+                        ← Back to Menu
                     </button>
-                    {isRoomCreated && (
-                        <button onClick={handleJoinRoom} className="bg-blue-500 w-1/2 py-2 rounded-md hover:bg-blue-600">
-                            Join Room
+                    <button className="bg-gradient-to-r from-purple-500 to-pink-500 py-2 rounded-md hover:from-purple-700 hover:to-pink-700">
+                        Available Room Card Count: {roomCardCount}
+                    </button>
+                </div>
+                <h1 className="text-3xl font-bold my-4">Create Room</h1>
+                <div className="bg-[#1a1b26] p-6 rounded-lg w-96 shadow-md">
+                    <InputField label="Room Name" type="text" value={roomSettings.roomName} onChange={handleInputChange} name="roomName" />
+                    <InputField label="Max Players" type="number" value={roomSettings.maxPlayers} onChange={handleInputChange} name="maxPlayers" />
+                    <div className="mb-4">
+                        <label className="block mb-2">Type</label>
+                        <select className="w-full p-2 bg-gray-800 text-white rounded-md" name="type" value={roomSettings.type} onChange={handleInputChange}>
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                    {roomSettings.type === 'private' && (
+                        <InputField label="Password" type="password" value={roomSettings.password} onChange={handleInputChange} name="password" />
+                    )}
+                    <div className="flex justify-between mt-4">
+                        <button onClick={handleCreateRoom} className="bg-green-600 w-1/2 py-2 rounded-md hover:bg-green-700">
+                            Create Room
                         </button>
+                        {isRoomCreated && (
+                            <button onClick={handleJoinRoom} className="bg-blue-500 w-1/2 py-2 rounded-md hover:bg-blue-600">
+                                Join Room
+                            </button>
+                        )}
+                    </div>
+                    {roomExpiryTimer && (
+                        <div className="mt-4 text-red-500">
+                            {roomExpiryTimer}
+                        </div>
                     )}
                 </div>
-                {roomExpiryTimer && (
-                    <div className="mt-4 text-red-500">
-                        {roomExpiryTimer}
-                    </div>
-                )}
-            </div>
-            <div className="flex justify-center mt-8 mb-8">
-                <p>Already have a room? <span className="text-blue-500 hover:text-blue-600" onClick={() => navigate('/tournaments/join-room')}>Join a Room</span></p>
+                <div className="flex justify-center mt-8 mb-8">
+                    <p>Already have a room? <span className="text-blue-500 hover:text-blue-600" onClick={() => navigate('/tournaments/join-room')}>Join a Room</span></p>
+                </div>
             </div>
             <Footer />
         </div>
