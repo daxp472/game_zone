@@ -16,7 +16,7 @@ import Leaderboard from './pages/Main-Sidebar/Leaderboard';
 import Store from './pages/Main-Sidebar/Store';
 import Friends from './pages/Main-Sidebar/Friends';
 import Support from './pages/Main-Sidebar/Support';
-// import Achievements from './pages/Main-Sidebar/Achievements';
+import Achievements from './pages/Main-Sidebar/Achievements';
 import SiteSettings from './pages/Main-Sidebar/SiteSettings';
 
 
@@ -91,6 +91,7 @@ function App() {
             <Route path="/friends" element={<PrivateRoute><Friends /></PrivateRoute>} />
             <Route path="/support" element={<PrivateRoute><Support /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><SiteSettings /></PrivateRoute>} />
+            <Route path='/achievements' element={<PrivateRoute><Achievements /></PrivateRoute>} />
 
 
 
