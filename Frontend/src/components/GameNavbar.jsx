@@ -40,11 +40,13 @@ function GameNavbar() {
   }, []);
 
   // Specify routes where the sidebar should be hidden
-  const hiddenSidebarRoutes = ['/hidden-route1', '/hidden-route2'];
+  const hiddenSidebarRoutes = ['/profile', '/profile/subscription', '/profile/settings', '/profile/notifications', '/profile/referral', '/profile/global-performance'];
 
   return (
     <div className="flex">
+      <div className='position-fixed z-10 overflow-hidden'>
       {!hiddenSidebarRoutes.includes(location.pathname) && <Sidebar />}
+      </div>
       <nav className={`bg-[#1a1b26] p-4 fixed top-0 w-full z-50 ${!hiddenSidebarRoutes.includes(location.pathname) ? 'ml-16' : ''}`}>
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-6">

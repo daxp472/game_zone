@@ -35,10 +35,10 @@ const Sidebar = () => {
         <Link 
           to={item.link}
           key={index} 
-          className="w-full flex items-center space-x-4 p-4 text-gray-300 hover:text-purple-500 group"
+          className="w-full flex items-center space-x-4 p-3 text-white hover:text-purple-500 group"
         >
           <div className="flex-shrink-0">{item.icon}</div>
-          <span className="hidden group-hover:inline">{item.text}</span>
+          <span className="hidden group-hover:inline ">{item.text}</span>
         </Link>
       ))}
     </div>
