@@ -1,32 +1,46 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import GameNavbar from '../components/GameNavbar';
 import Footer from '../components/Footer';
+import { motion, useAnimation, useInView } from 'framer-motion';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import * as THREE from 'three';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Stars, OrbitControls } from '@react-three/drei';
+
+gsap.registerPlugin(ScrollTrigger);
+
+function FloatingCube() {
+  const mesh = useRef();
+  useFrame(() => {
+    mesh.current.rotation.x += 0.01;
+    mesh.current.rotation.y += 0.01;
+  });
+
+  return (
+    <mesh ref={mesh}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="purple" />
+    </mesh>
+  );
+}
 
 function Home() {
-  const [games1, setGames1] = useState([
-    { id: 1, name: 'Game 1', category: 'Racing' },
-    { id: 2, name: 'Game 2', category: 'Action' },
-    { id: 3, name: 'Game 3', category: 'Puzzle' },
-    { id: 4, name: 'Game 4', category: 'Sports' },
-    { id: 5, name: 'Game 5', category: 'Strategy' },
-    { id: 6, name: 'Game 6', category: 'Adventure' },
-  ]);
-
-  const categories = [
-    { id: 'racing', name: 'Racing', icon: '🏎️' },
-    { id: 'action', name: 'Action', icon: '🎮' },
-    { id: 'puzzle', name: 'Puzzle', icon: '🧩' },
-    { id: 'sports', name: 'Sports', icon: '⚽' },
-    { id: 'strategy', name: 'Strategy', icon: '♟️' },
-    { id: 'adventure', name: 'Adventure', icon: '🗺️' },
-  ];
-
   const [games, setGames] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const heroRef = useRef(null);
+  const isInView = useInView(heroRef);
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start('visible');
+    }
+  }, [isInView, controls]);
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -48,107 +62,188 @@ function Home() {
     fetchGames();
   }, []);
 
+  useEffect(() => {
+    // GSAP Animations
+    gsap.from('.game-card', {
+      scrollTrigger: {
+        trigger: '.game-grid',
+        start: 'top center',
+        end: 'bottom center',
+        toggleActions: 'play none none reverse'
+      },
+      y: 100,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2
+    });
+  }, []);
+
+  const categories = [
+    { id: 'racing', name: 'Racing', icon: '🏎️' },
+    { id: 'action', name: 'Action', icon: '🎮' },
+    { id: 'puzzle', name: 'Puzzle', icon: '🧩' },
+    { id: 'sports', name: 'Sports', icon: '⚽' },
+    { id: 'strategy', name: 'Strategy', icon: '♟️' },
+    { id: 'adventure', name: 'Adventure', icon: '🗺️' },
+  ];
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#13141f] flex flex-col">
       <GameNavbar />
       <div className="flex-grow">
-
-        <div className="relative flex flex-col justify-center min-h-screen bg-gray-900 text-white">
-          <div className="absolute inset-0 z-0">
-            <img
-              src="https://res.cloudinary.com/dk16ymotz/image/upload/v1736786396/Site%20Images/ta2y8g4oz5qf09rbtwl5.png"
-              alt="Gaming background"
-              className="object-cover w-full h-full"
-            />
-            <div className="absolute inset-0 bg-black opacity-50"></div>
-          </div>
-
-          <div className="relative z-10 max-w-4xl mx-auto text-left px-2 pt-4">
-            <h1 className="text-5xl font-bold mb-6 leading-tight">
-              Play Unlimited Games Online
-            </h1>
-            <p className="text-xl mb-8">
-              Join millions of players worldwide and experience the best online games.
-              No downloads required!
-            </p>
-            <div className="flex justify-start space-x-4">
-              <button
-                className={`px-8 py-3 bg-purple-600 rounded-lg font-semibold transition duration-300 ease-in-out ${isHovered ? 'bg-purple-700' : ''
-                  }`}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                Play Now
-              </button>
-              <button className="px-8 py-3 bg-gray-700 rounded-lg font-semibold transition duration-300 ease-in-out hover:bg-gray-600">
-                Learn More
-              </button>
-            </div>
-          </div>
-
-
-          <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-8">
-            <button
-              className="animate-bounce bg-white p-2 w-10 h-10 ring-1 ring-slate-900/5 shadow-lg rounded-full flex items-center justify-center"
-              aria-label="Scroll down"
-              onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+        {/* Hero Section with 3D Background */}
+        <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          <Canvas className="absolute inset-0">
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, 10, 10]} />
+            <Stars />
+            <OrbitControls enableZoom={false} />
+            <FloatingCube />
+          </Canvas>
+  
+          <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
+            <motion.h1
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500"
             >
-              <svg className="w-6 h-6 text-violet-500" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-              </svg>
-            </button>
+              Welcome to GameZone
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-xl text-gray-300 mb-8"
+            >
+              Discover a world of endless gaming possibilities
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="flex justify-center space-x-4"
+            >
+              <Link
+                to="/categories"
+                className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transform hover:scale-105 transition-all duration-300"
+              >
+                Explore Games
+              </Link>
+              <Link
+                to="/tournaments"
+                className="bg-transparent border-2 border-purple-500 text-purple-500 px-8 py-3 rounded-lg hover:bg-purple-500 hover:text-white transform hover:scale-105 transition-all duration-300"
+              >
+                Join Tournament
+              </Link>
+            </motion.div>
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-8 flex-grow">
-          <h1 className="text-3xl text-white font-bold mb-8">Dashboard Games</h1>
-          {loading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p>Error: {error}</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {games.map((game) => (
-                <div key={game.id} className="bg-[#1a1b26] p-4 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
-                  <img src={game.imageUrl} alt={game.title} className="w-full h-48 object-cover mb-4 rounded-md" />
-                  <h2 className="text-2xl text-white font-bold mb-4">{game.title}</h2>
-                  <Link to={`/game/${game.id}`}>
-                    <button className="bg-purple-600 p-2 rounded-lg text-white hover:bg-purple-800 transition-colors duration-200">
-                      Play
-                    </button>
+        {/* Featured Games Section */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="container mx-auto px-4 py-16"
+        >
+          <h2 className="text-3xl font-bold text-white mb-8 text-center">Featured Games</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {games.map((game, index) => (
+              <motion.div
+                key={game.id}
+                variants={cardVariants}
+                className="game-card bg-[#1a1b26] rounded-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20"
+                whileHover={{
+                  y: -10,
+                  transition: { duration: 0.2 }
+                }}
+              >
+                <img
+                  src={game.imageUrl || 'https://via.placeholder.com/400x200'}
+                  alt={game.title}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-white mb-2">{game.title}</h3>
+                  <p className="text-gray-400 mb-4">{game.description || 'An exciting game awaits!'}</p>
+                  <Link
+                    to={`/game/${game.id}`}
+                    className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                  >
+                    Play Now
                   </Link>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="container mx-auto px-4 py-12">
-          <h2 className="text-2xl text-white font-bold mb-6">Explore Games</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {games1.map((game) => (
-              <div key={game.id} className="bg-[#1a1b26] p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 text-white">
-                {game.name} - {game.category}
-              </div>
+              </motion.div>
             ))}
           </div>
+        </motion.div>
 
-          <section className="mt-12">
-            <h2 className="text-2xl text-white font-bold mb-6">Game Categories</h2>
+        {/* Categories Section */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="py-16 bg-[#1a1b26]"
+        >
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">Game Categories</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {categories.map((category) => (
                 <Link
                   key={category.id}
                   to={`/category/${category.id}`}
-                  className="bg-[#1a1b26] p-6 rounded-lg flex flex-col items-center hover:bg-purple-600 transition-colors"
+                  className="group relative bg-[#2a2b36] p-6 rounded-lg flex flex-col items-center hover:bg-purple-600 transition-all duration-300 transform hover:scale-105"
                 >
-                  <span className="text-3xl mb-3">{category.icon}</span>
-                  <h3 className="text-white font-medium">{category.name}</h3>
+                  <span className="text-4xl mb-3 group-hover:scale-110 transition-transform">{category.icon}</span>
+                  <h3 className="text-white font-medium text-center">{category.name}</h3>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-300" />
                 </Link>
               ))}
             </div>
-          </section>
-        </div>
+          </div>
+        </motion.section>
+
+        {/* Call to Action Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="py-20 bg-gradient-to-r from-purple-600 to-pink-600"
+        >
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-4xl font-bold text-white mb-6">Ready to Start Gaming?</h2>
+            <p className="text-xl text-white/80 mb-8">Join millions of players worldwide and experience the best online games</p>
+            <Link
+              to="/categories"
+              className="inline-block bg-white text-purple-600 px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transform hover:scale-105 transition-all duration-300"
+            >
+              Start Playing Now
+            </Link>
+          </div>
+        </motion.section>
       </div>
       <Footer />
     </div>

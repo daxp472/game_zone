@@ -181,11 +181,11 @@ const Support = () => {
                                         </details>
                                         <details className="bg-gray-600 p-2 rounded-md">
                                             <summary className="font-semibold">How to enable 2FA for security?</summary>
-                                            <p className="mt-2">Navigate to 'Settings' > 'Security' and enable Two-Factor Authentication (2FA) using an authenticator app.</p>
+                                            <p className="mt-2">Navigate to 'Settings'  'Security' and enable Two-Factor Authentication (2FA) using an authenticator app.</p>
                                         </details>
                                         <details className="bg-gray-600 p-2 rounded-md">
                                             <summary className="font-semibold">How to change my email or username?</summary>
-                                            <p className="mt-2">Go to 'Settings' > 'Account' and update your email or username. You may need to verify your account for changes.</p>
+                                            <p className="mt-2">Go to 'Settings'  'Account' and update your email or username. You may need to verify your account for changes.</p>
                                         </details>
                                     </div>
                                 )}
