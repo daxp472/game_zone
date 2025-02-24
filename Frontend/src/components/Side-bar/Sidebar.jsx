@@ -16,7 +16,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 const Sidebar = () => {
   const items = [
     { text: 'Global Leaderboard', icon: <HomeIcon />, link: '/leaderboard' },
-    { text: 'Coin Store', icon: <StoreIcon />, link: '/store' },
+    { text: 'Store', icon: <StoreIcon />, link: '/store' },
     { text: 'Daily Challenges', icon: <AssignmentIcon />, link: '/challenges' },
     { text: 'Gifting System', icon: <GiftIcon />, link: '/gifting' },
     { text: 'Clans & Guilds', icon: <GroupIcon />, link: '/clans' },

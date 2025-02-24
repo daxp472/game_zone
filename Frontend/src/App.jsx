@@ -13,7 +13,9 @@ import Multiplayer from './pages/Multiplayer';
 
 
 import Leaderboard from './pages/Main-Sidebar/Leaderboard';
-import CoinStore from './pages/Main-Sidebar/CoinStore';
+import Store from './pages/Main-Sidebar/Store';
+import Friends from './pages/Main-Sidebar/Friends';
+import Support from './pages/Main-Sidebar/Support';
 
 
 import TournamentPage from './pages/Tournament/TournamentPage';
@@ -83,9 +85,12 @@ function App() {
 
 
             <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
-            <Route path="/store" element={<PrivateRoute><CoinStore /></PrivateRoute>} />
+            <Route path="/store" element={<PrivateRoute><Store /></PrivateRoute>} />
+            <Route path="/friends" element={<PrivateRoute><Friends /></PrivateRoute>} />
+            <Route path="/support" element={<PrivateRoute><Support /></PrivateRoute>} />
 
-            
+
+
 
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path="/profile/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />

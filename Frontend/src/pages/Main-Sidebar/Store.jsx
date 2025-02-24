@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import GameNavbar from '../../components/GameNavbar';
-import Footer from '../../components/LandingFooter';
+import Footer from '../../components/Footer';
 import { motion } from 'framer-motion';
 import { FaCoins, FaMoneyBill, FaRegClock } from 'react-icons/fa';
 import { IoMdTime } from 'react-icons/io';
