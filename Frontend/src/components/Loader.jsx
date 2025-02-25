@@ -1,109 +1,95 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import gsap from 'gsap';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Html, OrbitControls, Stars } from '@react-three/drei';
-import * as THREE from 'three';
-import lottie from 'lottie-web';
-import animationData from '../animations/loadingAnimation.json'; // Update the path to your Lottie animation file
 
-// 3D Rotating Sphere Component
-const RotatingSphere = () => {
-  const meshRef = useRef();
-
-  useFrame(() => {
-    meshRef.current.rotation.y += 0.01;
-    meshRef.current.rotation.x += 0.005;
-  });
-
-  return (
-    <mesh ref={meshRef} scale={1.5}>
-      <sphereGeometry args={[1, 32, 32]} />
-      <meshStandardMaterial color="purple" emissive="blue" emissiveIntensity={0.5} />
-    </mesh>
-  );
-};
-
-// Cursor Reacting Particles
-const CursorParticles = () => {
-  const particles = useRef();
-  useFrame(() => {
-    if (particles.current) {
-      particles.current.position.x = (window.innerWidth / 2 - window.mouseX) / 100;
-      particles.current.position.y = (window.innerHeight / 2 - window.mouseY) / 100;
-    }
-  });
-
-  return (
-    <points ref={particles}>
-      <bufferGeometry attach="geometry">
-        <bufferAttribute
-          attach="attributes-position"
-          array={new Float32Array([
-            0, 0, 0,
-            10, 10, 10,
-            -10, 10, 10,
-            -10, -10, 10,
-            10, -10, 10,
-          ])}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial color="white" size={0.5} />
-    </points>
-  );
-};
-
-const Loader = ({ setLoading }) => {
-  const loaderRef = useRef();
-  const [isAnimating, setIsAnimating] = useState(false);
-
+const Loader = () => {
   useEffect(() => {
-    if (setLoading) {
-      gsap.to(loaderRef.current, { opacity: 1, duration: 1 });
+    // GSAP animation for the loading text
+    gsap.to(".loading-text", {
+      duration: 0.8,
+      opacity: 0.5,
+      yoyo: true,
+      repeat: -1,
+      ease: "power2.inOut"
+    });
 
-      // Initialize Lottie animation
-      const lottieAnimation = lottie.loadAnimation({
-        container: loaderRef.current.querySelector('.lottie-container'),
-        animationData: animationData,
-        loop: true,
-        autoplay: true,
-      });
-
-      setIsAnimating(true);
-
-      setTimeout(() => {
-        gsap.to(loaderRef.current, {
-          opacity: 0,
-          duration: 1,
-          onComplete: () => {
-            if (typeof setLoading === 'function') {
-              setLoading(false);
-            }
-            setIsAnimating(false);
-          }
-        });
-      }, 3000);
-
-      return () => {
-        lottieAnimation.destroy();
-      };
-    }
-  }, [setLoading]);
+    // GSAP animation for the gaming controller
+    gsap.to(".controller", {
+      duration: 1,
+      rotate: 10,
+      yoyo: true,
+      repeat: -1,
+      ease: "power1.inOut"
+    });
+  }, []);
 
   return (
-    <div ref={loaderRef} className="fixed inset-0 flex items-center justify-center bg-black z-50" style={{ opacity: 0 }}>
-      <Canvas>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-        <RotatingSphere />
-        <CursorParticles />
-        <Stars />
-        <Html center>
-          <div className="lottie-container">
-            <h2 className="text-white text-3xl font-bold animate-pulse">Loading GameZone...</h2>
-          </div>
-        </Html>
-      </Canvas>
+    <div className="fixed inset-0 bg-[#13141f] bg-opacity-90 flex items-center justify-center z-50">
+      <div className="relative">
+        {/* Gaming Controller Icon */}
+        <motion.div
+          className="controller text-6xl mb-4 text-purple-500"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          🎮
+        </motion.div>
+
+        {/* Loading Text */}
+        <motion.div
+          className="loading-text text-2xl font-bold text-white text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          Loading...
+        </motion.div>
+
+        {/* Loading Bar */}
+        <motion.div
+          className="w-48 h-1 bg-gray-700 rounded-full mt-4 overflow-hidden"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
+            initial={{ x: "-100%" }}
+            animate={{ x: "100%" }}
+            transition={{
+              repeat: Infinity,
+              duration: 1,
+              ease: "linear"
+            }}
+          />
+        </motion.div>
+
+        {/* Loading Particles */}
+        <div className="absolute inset-0 -z-10">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-purple-500 rounded-full"
+              initial={{
+                x: Math.random() * 200 - 100,
+                y: Math.random() * 200 - 100,
+                opacity: 0
+              }}
+              animate={{
+                x: Math.random() * 200 - 100,
+                y: Math.random() * 200 - 100,
+                opacity: [0, 1, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                delay: Math.random() * 2
+              }}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

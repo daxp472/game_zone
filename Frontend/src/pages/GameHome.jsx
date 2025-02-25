@@ -173,14 +173,14 @@ function Home() {
             initial="hidden"
             animate="visible"
             className="container mx-auto px-4 py-16"
-            >
+          >
             <h2 className="text-3xl font-bold text-white mb-8 text-center">Featured Games</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {games.map((game, index) => (
                 <motion.div
                   key={game.id}
                   variants={cardVariants}
-                  className="game-card bg-[#1a1b26] rounded-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20"
+                  className="game-card bg-[#1a1b26] rounded-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-600/70"
                   whileHover={{
                     y: -10,
                     transition: { duration: 0.2 }
@@ -196,7 +196,7 @@ function Home() {
                     <p className="text-gray-400 mb-4">{game.description || 'An exciting game awaits!'}</p>
                     <Link
                       to={`/game/${game.id}`}
-                      className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                      className="inline-block bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors hover:shadow-md hover:shadow-white/80"
                     >
                       Play Now
                     </Link>
