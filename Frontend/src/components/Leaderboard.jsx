@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const API_URL = 'https://gamezone-leaderboard.onrender.com/api/leaderboard';
 
@@ -15,6 +16,7 @@ const LeaderboardDisplay = React.forwardRef(({ gameId }, ref) => {
       setLeaderboard(response.data.scores || []);
       setError(null);
     } catch (err) {
+      console.error("Failed to fetch leaderboard", err);
       setError('Failed to fetch leaderboard');
     } finally {
       setLoading(false);
@@ -64,8 +66,8 @@ const LeaderboardSection = ({ gameId, username, currentScore }) => {
   const [submissionStatus, setSubmissionStatus] = useState(null);
   const timeoutRef = useRef(null);
   const leaderboardRef = useRef();
+  const [lastRank, setLastRank] = useState(null);
 
-  // Fetch highest score from DB
   useEffect(() => {
     const fetchHighestScore = async () => {
       try {
@@ -101,6 +103,28 @@ const LeaderboardSection = ({ gameId, username, currentScore }) => {
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(submitScore, 5000);
   }, [currentScore]);
+
+  useEffect(() => {
+    const fetchLeaderboardAndCheckRank = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/${gameId}`);
+        const userRank = response.data.scores.findIndex(s => s.username === username) + 1;
+        if (lastRank !== null && userRank < lastRank) {
+          toast(`Ohh! You got #${userRank} 🎉 Congrats from our team!`, {
+            style: {
+              background: '#333',
+              color: '#fff',
+            },
+          });
+        }
+        setLastRank(userRank);
+      } catch (err) {
+        console.error("Failed to fetch leaderboard", err);
+      }
+    };
+
+    fetchLeaderboardAndCheckRank();
+  }, [gameId, lastRank, username]);
 
   return (
     <div className="space-y-6">
