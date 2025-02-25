@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import * as THREE from 'three';
 import NET from 'vanta/dist/vanta.net.min';
+import WelcomeAnimation from '../../components/WelcomeAnimation';
 
 function Login() {
+  const [showWelcome, setShowWelcome] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -79,6 +81,11 @@ function Login() {
       }
     }
   };
+
+  if (showWelcome) {
+    return <WelcomeAnimation onComplete={() => setShowWelcome(false)} />;
+  }
+
 
   return (
     <div className="min-h-screen bg-[#13141f] relative overflow-hidden" ref={vantaRef}>

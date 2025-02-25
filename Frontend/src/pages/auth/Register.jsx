@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import * as THREE from 'three';
 import NET from 'vanta/dist/vanta.net.min';
+import WelcomeAnimation from '../../components/WelcomeAnimation';
 
 function Register() {
+  const [showWelcome, setShowWelcome] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -23,6 +25,7 @@ function Register() {
   const vantaRef = useRef(null);
   const vantaEffect = useRef(null);
 
+  
   useEffect(() => {
     if (!vantaEffect.current) {
       vantaEffect.current = NET({
