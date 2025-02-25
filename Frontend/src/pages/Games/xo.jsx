@@ -4,6 +4,7 @@ import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import LeaderboardSection from '../../components/Leaderboard';
 import { useAuth } from '../../contexts/AuthContext';
+import { Toaster } from 'react-hot-toast';
 
 const XOGame = () => {
     const [board, setBoard] = useState(Array(9).fill(null));
@@ -91,9 +92,10 @@ const XOGame = () => {
     };
 
     return (
-        <div className="flex flex-col items-center mt-10 p-0">
+        <div className="flex flex-col mt-10 p-0">
             <GameNavbar />
-            <div className="flex w-full max-w-6xl">
+            <Toaster />
+            <div className="flex ml-20 w-full max-w-6xl">
                 {/* Left Section */}
                 <div className="w-1/5 flex flex-col items-start p-4">
                     <button
@@ -149,6 +151,7 @@ const XOGame = () => {
                                 username={user.username}
                                 currentScore={score.player}
                             />
+                            <Toaster />
                         </div>
                     </div>
 

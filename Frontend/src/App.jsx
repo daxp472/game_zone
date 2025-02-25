@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/auth/Login';
@@ -14,6 +15,7 @@ import Multiplayer from './pages/Multiplayer';
 
 import Leaderboard from './pages/Main-Sidebar/Leaderboard';
 import Store from './pages/Main-Sidebar/Store';
+import DailyChallenges from './pages/Main-Sidebar/DailyChallenges';
 import Friends from './pages/Main-Sidebar/Friends';
 import Support from './pages/Main-Sidebar/Support';
 import Achievements from './pages/Main-Sidebar/Achievements';
@@ -52,6 +54,7 @@ import Game2048 from "./pages/Games/2048";
 import GameHangman from "./pages/Games/hangman";
 import GameXO from "./pages/Games/xo";
 import GameFlappy from "./pages/Games/Flappy-bird"
+import GameAngryBird from "./pages/Games/Angry-Birds";
 
 function App() {
   return (
@@ -65,7 +68,7 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/how-to-play" element={<HowToPlay />} />
             <Route path="/contact" element={<ContactUs />} />
-            
+
             {/* Protected Routes */}
             <Route path="/home" element={<PrivateRoute><GameHome /></PrivateRoute>} />
             <Route path="/categories" element={<PrivateRoute><Categories /></PrivateRoute>} />
@@ -88,6 +91,7 @@ function App() {
 
             <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
             <Route path="/store" element={<PrivateRoute><Store /></PrivateRoute>} />
+            <Route path="/challenges" element={<PrivateRoute><DailyChallenges /></PrivateRoute>} />
             <Route path="/friends" element={<PrivateRoute><Friends /></PrivateRoute>} />
             <Route path="/support" element={<PrivateRoute><Support /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><SiteSettings /></PrivateRoute>} />
@@ -102,7 +106,7 @@ function App() {
             <Route path="/profile/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
             <Route path="/profile/global-performance" element={<PrivateRoute><GlobalPerformance /></PrivateRoute>} />
             <Route path="/profile/settings" element={<PrivateRoute><Settings1 /></PrivateRoute>} />
-<Route path="/profile/:username/settings/forgot-password" element={<PrivateRoute><ForgotPassword /></PrivateRoute>} />
+            <Route path="/profile/:username/settings/forgot-password" element={<PrivateRoute><ForgotPassword /></PrivateRoute>} />
             {/* <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> */}
 
 
@@ -116,10 +120,11 @@ function App() {
 
 
             {/* Game Pages */}
-            <Route path="/game/game-0" element={<PrivateRoute><Game2048 /></PrivateRoute>} /> 
+            <Route path="/game/game-0" element={<PrivateRoute><Game2048 /></PrivateRoute>} />
             <Route path="/game/game-1" element={<PrivateRoute><GameHangman /></PrivateRoute>} />
             <Route path="/game/game-2" element={<PrivateRoute><GameXO /></PrivateRoute>} />
             <Route path="/game/game-3" element={<PrivateRoute><GameFlappy /></PrivateRoute>} />
+            <Route path="/game/game-4" element={<PrivateRoute><GameAngryBird /></PrivateRoute>} />
 
           </Routes>
         </div>
