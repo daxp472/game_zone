@@ -47,14 +47,13 @@ function Home() {
     const fetchGames = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('https://dashboard-oeum.onrender.com/dashboard/games');
+        const response = await axios.get('https://dashboard-oeum.onrender.com/dashboard/games ');
         const gamesWithIds = response.data.map((game, index) => ({
           ...game,
-          id: game._id || `game-${index}`
+          id: game.id || `game-${index}`
         }));
         setGames(gamesWithIds);
       } catch (error) {
-        console.error("Failed to fetch games:", error);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -174,7 +173,7 @@ function Home() {
             initial="hidden"
             animate="visible"
             className="container mx-auto px-4 py-16"
-          >
+            >
             <h2 className="text-3xl font-bold text-white mb-8 text-center">Featured Games</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {games.map((game, index) => (
@@ -188,7 +187,7 @@ function Home() {
                   }}
                 >
                   <img
-                    src={game.imageUrl || 'https://via.placeholder.com/400x200'}
+                    src={game.imageUrl || 'https://via.placeholder.com/400x200 '}
                     alt={game.title}
                     className="w-full h-48 object-cover"
                   />
