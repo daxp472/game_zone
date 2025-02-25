@@ -57,6 +57,8 @@ import GameFlappy from "./pages/Games/Flappy-bird"
 import GameAngryBird from "./pages/Games/Angry-Birds";
 
 import Layout from "./components/Layout";
+import MobileNavigation from './components/MobileNavigation';
+import Toast from './components/Toast';
 
 function App() {
 
