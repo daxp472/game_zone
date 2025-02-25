@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import GameNavbar from '../components/GameNavbar';
 import Footer from '../components/Footer';
+import Loader from '../components/Loader';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -30,7 +31,7 @@ function FloatingCube() {
 function Home() {
   const [games, setGames] = useState([]);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const heroRef = useRef(null);
   const isInView = useInView(heroRef);
@@ -49,10 +50,11 @@ function Home() {
         const response = await axios.get('https://dashboard-oeum.onrender.com/dashboard/games');
         const gamesWithIds = response.data.map((game, index) => ({
           ...game,
-          id: game.id || `game-${index}`
+          id: game._id || `game-${index}`
         }));
         setGames(gamesWithIds);
       } catch (error) {
+        console.error("Failed to fetch games:", error);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -89,8 +91,8 @@ function Home() {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         duration: 0.6,
@@ -122,7 +124,7 @@ function Home() {
             <OrbitControls enableZoom={false} />
             <FloatingCube />
           </Canvas>
-  
+
           <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
             <motion.h1
               initial={{ opacity: 0, y: -50 }}
@@ -163,43 +165,49 @@ function Home() {
         </div>
 
         {/* Featured Games Section */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="container mx-auto px-4 py-16"
-        >
-          <h2 className="text-3xl font-bold text-white mb-8 text-center">Featured Games</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {games.map((game, index) => (
-              <motion.div
-                key={game.id}
-                variants={cardVariants}
-                className="game-card bg-[#1a1b26] rounded-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20"
-                whileHover={{
-                  y: -10,
-                  transition: { duration: 0.2 }
-                }}
-              >
-                <img
-                  src={game.imageUrl || 'https://via.placeholder.com/400x200'}
-                  alt={game.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-white mb-2">{game.title}</h3>
-                  <p className="text-gray-400 mb-4">{game.description || 'An exciting game awaits!'}</p>
-                  <Link
-                    to={`/game/${game.id}`}
-                    className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-                  >
-                    Play Now
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+
+        {loading ? (
+          <Loader setLoading={setLoading} />
+        ) : (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="container mx-auto px-4 py-16"
+          >
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">Featured Games</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {games.map((game, index) => (
+                <motion.div
+                  key={game.id}
+                  variants={cardVariants}
+                  className="game-card bg-[#1a1b26] rounded-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20"
+                  whileHover={{
+                    y: -10,
+                    transition: { duration: 0.2 }
+                  }}
+                >
+                  <img
+                    src={game.imageUrl || 'https://via.placeholder.com/400x200'}
+                    alt={game.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-white mb-2">{game.title}</h3>
+                    <p className="text-gray-400 mb-4">{game.description || 'An exciting game awaits!'}</p>
+                    <Link
+                      to={`/game/${game.id}`}
+                      className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                      Play Now
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
 
         {/* Categories Section */}
         <motion.section
