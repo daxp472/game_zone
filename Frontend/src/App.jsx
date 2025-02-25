@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 import LandingPage from './pages/LandingPage';
@@ -56,78 +56,84 @@ import GameXO from "./pages/Games/xo";
 import GameFlappy from "./pages/Games/Flappy-bird"
 import GameAngryBird from "./pages/Games/Angry-Birds";
 
+import Layout from "./components/Layout";
+
 function App() {
+
+
   return (
     <Router>
       <ErrorBoundary>
-        <div className="min-h-screen bg-[#13141f] pt-16"> {/* Added pt-16 for fixed navbar */}
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/about" element={<AboutUs />} />
-            <Route path="/how-to-play" element={<HowToPlay />} />
-            <Route path="/contact" element={<ContactUs />} />
+        <Layout>
+          <div className="min-h-screen bg-[#13141f] pt-16"> {/* Added pt-16 for fixed navbar */}
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/about" element={<AboutUs />} />
+              <Route path="/how-to-play" element={<HowToPlay />} />
+              <Route path="/contact" element={<ContactUs />} />
 
-            {/* Protected Routes */}
-            <Route path="/home" element={<PrivateRoute><GameHome /></PrivateRoute>} />
-            <Route path="/categories" element={<PrivateRoute><Categories /></PrivateRoute>} />
-            {/* <Route path="/category/:category" element={<CategoryPage />} /> */}
-            <Route path="/game/:gameId" element={<PrivateRoute><GameDetails /></PrivateRoute>} />
-            <Route path="/new-games" element={<PrivateRoute><NewGames /></PrivateRoute>} />
-            <Route path="/popular" element={<PrivateRoute><Popular /></PrivateRoute>} />
+              {/* Protected Routes */}
+              <Route path="/home" element={<PrivateRoute><GameHome /></PrivateRoute>} />
+              <Route path="/categories" element={<PrivateRoute><Categories /></PrivateRoute>} />
+              {/* <Route path="/category/:category" element={<CategoryPage />} /> */}
+              <Route path="/game/:gameId" element={<PrivateRoute><GameDetails /></PrivateRoute>} />
+              <Route path="/new-games" element={<PrivateRoute><NewGames /></PrivateRoute>} />
+              <Route path="/popular" element={<PrivateRoute><Popular /></PrivateRoute>} />
 
-            {/* Tournaments */}
-            {/* <Route path="/tournaments" element={<PrivateRoute><Tournaments /></PrivateRoute>} /> */}
-            <Route path="/tournaments" element={<PrivateRoute><TournamentPage /></PrivateRoute>} />
-            <Route path="/tournament/:id" element={<PrivateRoute><TournamentDetails /></PrivateRoute>} />
-            <Route path="/tournaments/create-room" element={<PrivateRoute><CreateTournament /></PrivateRoute>} />
-            <Route path="/tournaments/manage-room/:roomId" element={<PrivateRoute><RoomMangePage /></PrivateRoute>} />
-
-
-            <Route path="/multiplayer" element={<PrivateRoute><Multiplayer /></PrivateRoute>} />
+              {/* Tournaments */}
+              {/* <Route path="/tournaments" element={<PrivateRoute><Tournaments /></PrivateRoute>} /> */}
+              <Route path="/tournaments" element={<PrivateRoute><TournamentPage /></PrivateRoute>} />
+              <Route path="/tournament/:id" element={<PrivateRoute><TournamentDetails /></PrivateRoute>} />
+              <Route path="/tournaments/create-room" element={<PrivateRoute><CreateTournament /></PrivateRoute>} />
+              <Route path="/tournaments/manage-room/:roomId" element={<PrivateRoute><RoomMangePage /></PrivateRoute>} />
 
 
-
-            <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
-            <Route path="/store" element={<PrivateRoute><Store /></PrivateRoute>} />
-            <Route path="/challenges" element={<PrivateRoute><DailyChallenges /></PrivateRoute>} />
-            <Route path="/friends" element={<PrivateRoute><Friends /></PrivateRoute>} />
-            <Route path="/support" element={<PrivateRoute><Support /></PrivateRoute>} />
-            <Route path="/settings" element={<PrivateRoute><SiteSettings /></PrivateRoute>} />
-            <Route path='/achievements' element={<PrivateRoute><Achievements /></PrivateRoute>} />
+              <Route path="/multiplayer" element={<PrivateRoute><Multiplayer /></PrivateRoute>} />
 
 
 
-
-            <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-            <Route path="/profile/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />
-            <Route path="/profile/referral" element={<PrivateRoute><ReferAndEarn /></PrivateRoute>} />
-            <Route path="/profile/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
-            <Route path="/profile/global-performance" element={<PrivateRoute><GlobalPerformance /></PrivateRoute>} />
-            <Route path="/profile/settings" element={<PrivateRoute><Settings1 /></PrivateRoute>} />
-            <Route path="/profile/:username/settings/forgot-password" element={<PrivateRoute><ForgotPassword /></PrivateRoute>} />
-            {/* <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> */}
+              <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
+              <Route path="/store" element={<PrivateRoute><Store /></PrivateRoute>} />
+              <Route path="/challenges" element={<PrivateRoute><DailyChallenges /></PrivateRoute>} />
+              <Route path="/friends" element={<PrivateRoute><Friends /></PrivateRoute>} />
+              <Route path="/support" element={<PrivateRoute><Support /></PrivateRoute>} />
+              <Route path="/settings" element={<PrivateRoute><SiteSettings /></PrivateRoute>} />
+              <Route path='/achievements' element={<PrivateRoute><Achievements /></PrivateRoute>} />
 
 
-            {/* Category Pages */}
-            <Route path="/category/racing" element={<Racing />} />
-            <Route path="/category/action" element={<Action />} />
-            <Route path="/category/puzzle" element={<Puzzle />} />
-            <Route path="/category/sports" element={<Sports />} />
-            <Route path="/category/strategy" element={<Strategy />} />
-            <Route path="/category/adventure" element={<Adventure />} />
 
 
-            {/* Game Pages */}
-            <Route path="/game/game-0" element={<PrivateRoute><Game2048 /></PrivateRoute>} />
-            <Route path="/game/game-1" element={<PrivateRoute><GameHangman /></PrivateRoute>} />
-            <Route path="/game/game-2" element={<PrivateRoute><GameXO /></PrivateRoute>} />
-            <Route path="/game/game-3" element={<PrivateRoute><GameFlappy /></PrivateRoute>} />
-            <Route path="/game/game-4" element={<PrivateRoute><GameAngryBird /></PrivateRoute>} />
+              <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+              <Route path="/profile/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />
+              <Route path="/profile/referral" element={<PrivateRoute><ReferAndEarn /></PrivateRoute>} />
+              <Route path="/profile/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+              <Route path="/profile/global-performance" element={<PrivateRoute><GlobalPerformance /></PrivateRoute>} />
+              <Route path="/profile/settings" element={<PrivateRoute><Settings1 /></PrivateRoute>} />
+              <Route path="/profile/:username/settings/forgot-password" element={<PrivateRoute><ForgotPassword /></PrivateRoute>} />
+              {/* <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> */}
 
-          </Routes>
-        </div>
+
+              {/* Category Pages */}
+              <Route path="/category/racing" element={<Racing />} />
+              <Route path="/category/action" element={<Action />} />
+              <Route path="/category/puzzle" element={<Puzzle />} />
+              <Route path="/category/sports" element={<Sports />} />
+              <Route path="/category/strategy" element={<Strategy />} />
+              <Route path="/category/adventure" element={<Adventure />} />
+
+
+              {/* Game Pages */}
+              <Route path="/game/game-0" element={<PrivateRoute><Game2048 /></PrivateRoute>} />
+              <Route path="/game/game-1" element={<PrivateRoute><GameHangman /></PrivateRoute>} />
+              <Route path="/game/game-2" element={<PrivateRoute><GameXO /></PrivateRoute>} />
+              <Route path="/game/game-3" element={<PrivateRoute><GameFlappy /></PrivateRoute>} />
+              <Route path="/game/game-4" element={<PrivateRoute><GameAngryBird /></PrivateRoute>} />
+
+            </Routes>
+          </div>
+        </Layout>
       </ErrorBoundary>
     </Router>
   );

@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import gsap from 'gsap';
 
 const Loader = () => {
+  const [snakePosition, setSnakePosition] = useState({ x: 0, y: 0 });
+
   useEffect(() => {
     // GSAP animation for the loading text
     gsap.to(".loading-text", {
@@ -21,6 +23,17 @@ const Loader = () => {
       repeat: -1,
       ease: "power1.inOut"
     });
+
+    // Mouse move event for snake
+    const handleMouseMove = (e) => {
+      setSnakePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
   }, []);
 
   return (
@@ -65,30 +78,52 @@ const Loader = () => {
           />
         </motion.div>
 
-        {/* Loading Particles */}
-        <div className="absolute inset-0 -z-10">
-          {[...Array(20)].map((_, i) => (
+        {/* Puzzle Animation */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          {[...Array(9)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 bg-purple-500 rounded-full"
-              initial={{
-                x: Math.random() * 200 - 100,
-                y: Math.random() * 200 - 100,
-                opacity: 0
-              }}
-              animate={{
-                x: Math.random() * 200 - 100,
-                y: Math.random() * 200 - 100,
-                opacity: [0, 1, 0],
-              }}
+              className="w-12 h-12 bg-purple-500 m-1"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{
-                duration: 2,
+                delay: i * 0.1,
+                duration: 0.5,
                 repeat: Infinity,
-                delay: Math.random() * 2
+                repeatType: "reverse"
               }}
             />
           ))}
         </div>
+
+        {/* Cards Animation */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          {[...Array(5)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-16 h-24 bg-blue-500 rounded-lg"
+              initial={{ x: 0, y: 0, rotate: 0 }}
+              animate={{
+                x: [0, 100, -100, 0],
+                y: [0, -100, 100, 0],
+                rotate: [0, 360]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                delay: i * 0.2
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Snake Animation */}
+        <motion.div
+          className="absolute w-8 h-8 bg-green-500 rounded-full"
+          style={{ top: snakePosition.y, left: snakePosition.x }}
+          animate={{ x: snakePosition.x, y: snakePosition.y }}
+          transition={{ duration: 0.1 }}
+        />
       </div>
     </div>
   );
