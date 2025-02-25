@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
     setLoading(true);
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 5000); // Duration of the loader
+    }, 2000); // Duration of the loader
 
     return () => clearTimeout(timer);
   }, [location]);
