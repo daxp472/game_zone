@@ -53,6 +53,7 @@ import Game2048 from "./pages/Games/2048";
 import GameHangman from "./pages/Games/hangman";
 import GameXO from "./pages/Games/xo";
 import GameFlappy from "./pages/Games/Flappy-bird"
+import GameAngryBird from "./pages/Games/Angry-Birds";
 
 function App() {
   return (
@@ -66,7 +67,7 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/how-to-play" element={<HowToPlay />} />
             <Route path="/contact" element={<ContactUs />} />
-            
+
             {/* Protected Routes */}
             <Route path="/home" element={<PrivateRoute><GameHome /></PrivateRoute>} />
             <Route path="/categories" element={<PrivateRoute><Categories /></PrivateRoute>} />
@@ -104,7 +105,7 @@ function App() {
             <Route path="/profile/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
             <Route path="/profile/global-performance" element={<PrivateRoute><GlobalPerformance /></PrivateRoute>} />
             <Route path="/profile/settings" element={<PrivateRoute><Settings1 /></PrivateRoute>} />
-<Route path="/profile/:username/settings/forgot-password" element={<PrivateRoute><ForgotPassword /></PrivateRoute>} />
+            <Route path="/profile/:username/settings/forgot-password" element={<PrivateRoute><ForgotPassword /></PrivateRoute>} />
             {/* <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> */}
 
 
@@ -118,10 +119,11 @@ function App() {
 
 
             {/* Game Pages */}
-            <Route path="/game/game-0" element={<PrivateRoute><Game2048 /></PrivateRoute>} /> 
+            <Route path="/game/game-0" element={<PrivateRoute><Game2048 /></PrivateRoute>} />
             <Route path="/game/game-1" element={<PrivateRoute><GameHangman /></PrivateRoute>} />
             <Route path="/game/game-2" element={<PrivateRoute><GameXO /></PrivateRoute>} />
             <Route path="/game/game-3" element={<PrivateRoute><GameFlappy /></PrivateRoute>} />
+            <Route path="/game/game-4" element={<PrivateRoute><GameAngryBird /></PrivateRoute>} />
 
           </Routes>
         </div>

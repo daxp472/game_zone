@@ -113,7 +113,7 @@ function Home() {
     <div className="min-h-screen bg-[#13141f] flex flex-col">
       <GameNavbar />
       <div className="flex-grow">
-        {/* Hero Section with 3D Background */}
+
         <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
           <Canvas className="absolute inset-0">
             <ambientLight intensity={0.5} />
