@@ -62,11 +62,38 @@ import Toast from './components/Toast';
 
 function App() {
 
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    // Show welcome animation on login/signup
+    const isNewLogin = sessionStorage.getItem('newLogin');
+    if (isNewLogin) {
+      setShowWelcome(true);
+      sessionStorage.removeItem('newLogin');
+    }
+  }, []);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
+
 
   return (
     <Router>
       <ErrorBoundary>
         <Layout>
+        {showWelcome && (
+          <WelcomeLoader onComplete={() => setShowWelcome(false)} />
+        )}
+        
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
           <div className="min-h-screen bg-[#13141f] pt-16"> {/* Added pt-16 for fixed navbar */}
             <Routes>
               <Route path="/" element={<LandingPage />} />
@@ -134,6 +161,7 @@ function App() {
               <Route path="/game/game-4" element={<PrivateRoute><GameAngryBird /></PrivateRoute>} />
 
             </Routes>
+            <MobileNavigation />
           </div>
         </Layout>
       </ErrorBoundary>
