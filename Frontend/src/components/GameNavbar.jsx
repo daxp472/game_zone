@@ -10,7 +10,6 @@ function GameNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [clickCount, setClickCount] = useState(0);
@@ -56,17 +55,19 @@ function GameNavbar() {
 
   return (
     <div className="flex">
+      {/* Sidebar - Hidden in welcome section on homepage */}
+      <div className={`hidden lg:block ${
+        !hiddenSidebarRoutes.includes(location.pathname) ? '' : 'lg:hidden'
+      } ${location.pathname === '/home' ? 'homepage-sidebar' : ''}`}>
+        <Sidebar />
+      </div>
+
+      {/* Mobile Sidebar - Only visible when toggled on mobile */}
       <AnimatePresence>
         {sidebarOpen && (
-          <motion.div
-            initial={{ x: -250 }}
-            animate={{ x: 0 }}
-            exit={{ x: -250 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed z-50 h-screen bg-[#1a1b26] shadow-2xl"
-          >
-            <Sidebar onClose={() => setSidebarOpen(false)} />
-          </motion.div>
+          <div className="lg:hidden">
+            <Sidebar />
+          </div>
         )}
       </AnimatePresence>
 
@@ -74,19 +75,22 @@ function GameNavbar() {
         initial="hidden"
         animate="visible"
         variants={navVariants}
-        className={`bg-[#1a1b26] p-4 fixed top-0 w-full z-40 shadow-lg ${!hiddenSidebarRoutes.includes(location.pathname) ? 'ml-0 md:ml-16' : ''}`}
+        className={`bg-[#1a1b26] p-4 fixed top-0 w-full z-40 shadow-lg h-16 ${
+          !hiddenSidebarRoutes.includes(location.pathname) ? 'ml-0 lg:ml-16' : ''
+        }`}
       >
-        <div className="container mx-auto">
-          <div className="flex justify-between items-center">
+        <div className="container mx-auto h-full">
+          <div className="flex justify-between items-center h-full">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="text-gray-300 hover:text-purple-500 md:hidden"
+                className="text-gray-300 hover:text-purple-500 lg:hidden"
+                aria-label="Toggle menu"
               >
-                <FaBars className="h-6 w-6" />
+                {sidebarOpen ? <FaTimes className="h-5 w-5" /> : <FaBars className="h-5 w-5" />}
               </button>
               
-              <Link to="/home" className="text-purple-500 text-2xl font-bold whitespace-nowrap">
+              <Link to="/home" className="text-purple-500 text-xl font-bold whitespace-nowrap">
                 <motion.span
                   whileHover={{ scale: 1.05 }}
                   className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500"
@@ -95,13 +99,14 @@ function GameNavbar() {
                 </motion.span>
               </Link>
 
-              <div className="hidden md:flex items-center space-x-6">
-                <Link to="/home" className="text-gray-300 hover:text-purple-500 transition-colors">Home</Link>
-                <Link to="/categories" className="text-gray-300 hover:text-purple-500 transition-colors">Categories</Link>
-                <Link to="/new-games" className="text-gray-300 hover:text-purple-500 transition-colors">New Games</Link>
-                <Link to="/popular" className="text-gray-300 hover:text-purple-500 transition-colors">Popular</Link>
-                <Link to="/multiplayer" className="text-gray-300 hover:text-purple-500 transition-colors">Multiplayer</Link>
-                <Link to="/tournaments" className="text-gray-300 hover:text-purple-500 transition-colors">Tournaments</Link>
+              {/* Desktop Navigation - Only visible on PC */}
+              <div className="hidden lg:flex items-center space-x-6">
+                <Link to="/home" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">Home</Link>
+                <Link to="/categories" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">Categories</Link>
+                <Link to="/new-games" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">New Games</Link>
+                <Link to="/popular" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">Popular</Link>
+                <Link to="/multiplayer" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">Multiplayer</Link>
+                <Link to="/tournaments" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">Tournaments</Link>
               </div>
             </div>
 
@@ -114,7 +119,8 @@ function GameNavbar() {
               >
                 <button
                   onClick={() => setSearchOpen(!searchOpen)}
-                  className="md:hidden text-gray-300 hover:text-purple-500"
+                  className="lg:hidden text-gray-300 hover:text-purple-500"
+                  aria-label="Search"
                 >
                   <FaSearch className="h-5 w-5" />
                 </button>
@@ -122,7 +128,7 @@ function GameNavbar() {
                   type="text"
                   placeholder="Search games..."
                   className={`bg-[#2a2b36] text-gray-300 px-4 py-1 rounded-md w-full transition-all duration-300 ${
-                    searchOpen ? 'opacity-100' : 'opacity-0 hidden md:block'
+                    searchOpen ? 'opacity-100' : 'opacity-0 hidden lg:block'
                   }`}
                 />
               </motion.div>
@@ -159,27 +165,6 @@ function GameNavbar() {
               </div>
             </div>
           </div>
-
-          {/* Mobile Menu */}
-          <AnimatePresence>
-            {menuOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="md:hidden mt-4"
-              >
-                <div className="flex flex-col space-y-2">
-                  <Link to="/home" className="text-gray-300 hover:text-purple-500 py-2">Home</Link>
-                  <Link to="/categories" className="text-gray-300 hover:text-purple-500 py-2">Categories</Link>
-                  <Link to="/new-games" className="text-gray-300 hover:text-purple-500 py-2">New Games</Link>
-                  <Link to="/popular" className="text-gray-300 hover:text-purple-500 py-2">Popular</Link>
-                  <Link to="/multiplayer" className="text-gray-300 hover:text-purple-500 py-2">Multiplayer</Link>
-                  <Link to="/tournaments" className="text-gray-300 hover:text-purple-500 py-2">Tournaments</Link>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </motion.nav>
     </div>
