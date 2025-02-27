@@ -141,17 +141,17 @@ function Home() {
       <GameNavbar />
       
       {/* Main content with consistent sidebar margin */}
-      <div className="flex-grow pt-16"> 
-        <div className="lg:ml-16"> 
+      <div className="flex-grow -pt-16"> 
+        <div className="-ml-16"> 
           {/* Welcome Section */}
-          <div className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden">
+          <div className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center -mt-16 overflow-hidden">
             {/* 3D Background - Only visible on larger screens */}
-            <div className="hidden lg:block absolute inset-0">
+            <div className="hidden lg:block absolute inset-0 -mt-16 ">
               <Canvas className="absolute inset-0">
                 <ambientLight intensity={0.5} />
                 <pointLight position={[10, 10, 10]} />
                 <Stars />
-                <OrbitControls enableZoom={false} />
+                <OrbitControls enableZoom={true} />
                 <RubiksCube />
               </Canvas>
             </div>
