@@ -151,11 +151,11 @@ function Home() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="bg-[#1a1b26] p-6 rounded-lg shadow-lg relative max-w-md w-full"
+            className="bg-[#1a1b26] p-6 rounded-lg shadow-lg relative "
           >
             <button
               onClick={() => setIsPopupOpen(false)}
-              className="absolute top-2 right-2 text-white hover:text-purple-500"
+              className="absolute top-2 right-2 text-red-700 hover:text-purple-500 bg-white font-bold rounded-full h-8 w-8"
             >
               ✕
             </button>
