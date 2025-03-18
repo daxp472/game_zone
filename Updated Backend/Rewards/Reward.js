@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config(); // Dotenv ko require aur configure karo
+require('dotenv').config();
 
 const app = express();
 app.use(express.json());
@@ -18,7 +18,7 @@ mongoose.connect(MONGODB_URI, {
 
 // Reward Schema
 const rewardSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true }, // username → email
   lastLoginDate: { type: Date, default: null },
   isDailyRewardEligible: { type: Boolean, default: false },
   isStreakRewardEligible: { type: Boolean, default: false },
@@ -48,11 +48,11 @@ function isConsecutiveDay(lastDate, currentDate) {
 
 // Login endpoint
 app.post('/reward/login', async (req, res) => {
-  const { username } = req.body;
+  const { email } = req.body; // username → email
   const currentDate = new Date();
 
   try {
-    let reward = await Rewards.findOne({ username });
+    let reward = await Rewards.findOne({ email }); // username → email
 
     if (reward) {
       const lastLogin = new Date(reward.lastLoginDate);
@@ -66,7 +66,7 @@ app.post('/reward/login', async (req, res) => {
 
     if (!reward) {
       reward = new Rewards({
-        username,
+        email, // username → email
         lastLoginDate: currentDate,
         dailyStreak: 1,
         totalStreak: 1,
@@ -127,10 +127,10 @@ const dailyRewards = [
 
 // Claim Reward Endpoint
 app.patch('/reward/claim-reward', async (req, res) => {
-  const { username, rewardType } = req.body;
+  const { email, rewardType } = req.body; // username → email
 
   try {
-    const reward = await Rewards.findOne({ username });
+    const reward = await Rewards.findOne({ email }); // username → email
     if (!reward) {
       return res.status(404).json({ message: 'User not found.' });
     }
@@ -169,11 +169,11 @@ app.patch('/reward/claim-reward', async (req, res) => {
 });
 
 // Get User Reward Info
-app.get('/reward/user/:username', async (req, res) => {
-  const { username } = req.params;
+app.get('/reward/user/:email', async (req, res) => { // :username → :email
+  const { email } = req.params; // username → email
 
   try {
-    const reward = await Rewards.findOne({ username });
+    const reward = await Rewards.findOne({ email }); // username → email
     if (!reward) {
       return res.status(404).json({ message: 'User not found.' });
     }
