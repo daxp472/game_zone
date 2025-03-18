@@ -30,7 +30,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-16 hover:w-64 bg-[#1a1b26] h-screen fixed flex flex-col items-center transition-width duration-300">
+    <div className="w-16 z-30 hover:w-64 bg-[#1a1b26] h-screen fixed flex flex-col items-center transition-width duration-300">
       {items.map((item, index) => (
         <Link 
           to={item.link}

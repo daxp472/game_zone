@@ -94,7 +94,7 @@ function App() {
             onClose={() => setToast(null)}
           />
         )}
-          <div className="min-h-screen bg-[#13141f] pt-16"> {/* Added pt-16 for fixed navbar */}
+          <div className="min-h-screen bg-[#13141f]"> {/* Added pt-16 for fixed navbar */}
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />

@@ -25,8 +25,8 @@ function Popup() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        await axios.post('http://localhost:5000/reward/login', { username });
-        const response = await axios.get(`http://localhost:5000/reward/user/${username}`);
+        await axios.post('https://game-zone-reward.onrender.com/reward/login', { username });
+        const response = await axios.get(`https://game-zone-reward.onrender.com/reward/user/${username}`);
         setUserData(response.data);
         setLoading(false)
       } catch (error) {
@@ -41,7 +41,7 @@ function Popup() {
     if (!userData || day !== userData.dailyStreak || !userData.isDailyRewardEligible) return;
 
     try {
-      const response = await axios.patch('http://localhost:5000/reward/claim-reward', {
+      const response = await axios.patch('https://game-zone-reward.onrender.com/reward/claim-reward', {
         username,
         rewardType: 'daily',
       });
@@ -57,7 +57,7 @@ function Popup() {
     if (!userData || !userData.isStreakRewardEligible) return;
 
     try {
-      const response = await axios.patch('http://localhost:5000/reward/claim-reward', {
+      const response = await axios.patch('https://game-zone-reward.onrender.com/reward/claim-reward', {
         username,
         rewardType: 'streak',
       });
