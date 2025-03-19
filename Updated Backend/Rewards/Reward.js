@@ -1,82 +1,72 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config(); // Dotenv ko require aur configure karo
+require('dotenv').config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
 
-// MongoDB connection with .env fallback
+// CORS configuration - Allow localhost:5173 explicitly
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://gamezoneofficial.netlify.app'], // Add your frontend domain if deployed
+  methods: ['GET', 'POST', 'PATCH'],
+  allowedHeaders: ['Content-Type'],
+}));
+
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/Rewards';
+
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log('MongoDB connected successfully'))
+  .then(() => {
+    console.log('MongoDB connected successfully');
+    // Drop problematic index on startup (if needed)
+    const { dropProblematicIndex } = require('./models/Rewards');
+    return dropProblematicIndex();
+  })
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Reward Schema
-const rewardSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  lastLoginDate: { type: Date, default: null },
-  isDailyRewardEligible: { type: Boolean, default: false },
-  isStreakRewardEligible: { type: Boolean, default: false },
-  dailyStreak: { type: Number, default: 0 },
-  totalStreak: { type: Number, default: 0 },
-  rewardsClaimed: { type: [Number], default: [] },
-  dailyRewardsClaimed: { type: [Number], default: [] },
-  coin: { type: Number, default: 0 },
-  cash: { type: Number, default: 0 },
-  roomCards: { type: Number, default: 0 },
-});
+const { Rewards } = require('./models/Rewards');
 
-const Rewards = mongoose.model('Rewards', rewardSchema);
-
-// Helper function to check if two dates are consecutive
 function isConsecutiveDay(lastDate, currentDate) {
   const last = new Date(lastDate);
   const current = new Date(currentDate);
-
   last.setUTCHours(5, 30, 0, 0);
   current.setUTCHours(5, 30, 0, 0);
   const diff = current - last;
-
   const oneDay = 24 * 60 * 60 * 1000;
   return Math.abs(diff) === oneDay;
 }
 
-// Login endpoint
 app.post('/reward/login', async (req, res) => {
-  const { username } = req.body;
+  const { email } = req.body;
   const currentDate = new Date();
 
+  if (!email) return res.status(400).json({ message: 'Email is required' });
+
   try {
-    let reward = await Rewards.findOne({ username });
-
-    if (reward) {
-      const lastLogin = new Date(reward.lastLoginDate);
-      lastLogin.setUTCHours(5, 30, 0, 0);
-      currentDate.setUTCHours(5, 30, 0, 0);
-
-      if (lastLogin.toDateString() === currentDate.toDateString()) {
-        return res.json({ message: 'Already logged in today.', ...reward.toObject() });
-      }
-    }
+    let reward = await Rewards.findOne({ email });
 
     if (!reward) {
       reward = new Rewards({
-        username,
+        email,
         lastLoginDate: currentDate,
         dailyStreak: 1,
         totalStreak: 1,
         isDailyRewardEligible: true,
       });
       await reward.save();
-      return res.json({
-        message: 'Welcome! Daily streak started.',
-        ...reward.toObject(),
-      });
+      console.log('New user created and saved:', reward.toObject());
+      return res.status(201).json({ message: 'Welcome! Daily streak started.', ...reward.toObject() });
+    }
+
+    const lastLogin = new Date(reward.lastLoginDate);
+    lastLogin.setUTCHours(5, 30, 0, 0);
+    currentDate.setUTCHours(5, 30, 0, 0);
+
+    if (lastLogin.toDateString() === currentDate.toDateString()) {
+      return res.json({ message: 'Already logged in today.', ...reward.toObject() });
     }
 
     if (isConsecutiveDay(reward.lastLoginDate, currentDate)) {
@@ -99,19 +89,15 @@ app.post('/reward/login', async (req, res) => {
     }
 
     reward.isDailyRewardEligible = !reward.dailyRewardsClaimed.includes(reward.dailyStreak);
-
-    if ([10, 20, 30].includes(reward.totalStreak) && !reward.rewardsClaimed.includes(reward.totalStreak)) {
-      reward.isStreakRewardEligible = true;
-    } else {
-      reward.isStreakRewardEligible = false;
-    }
-
+    reward.isStreakRewardEligible = [10, 20, 30].includes(reward.totalStreak) && !reward.rewardsClaimed.includes(reward.totalStreak);
     reward.lastLoginDate = currentDate;
-    await reward.save();
 
+    await reward.save();
+    console.log('User updated:', reward.toObject());
     res.json({ message: 'Login successful!', ...reward.toObject() });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Failed to login or create user', error: error.message });
   }
 });
 
@@ -125,14 +111,25 @@ const dailyRewards = [
   { day: 7, coin: 0, cash: 30 },
 ];
 
-// Claim Reward Endpoint
 app.patch('/reward/claim-reward', async (req, res) => {
-  const { username, rewardType } = req.body;
+  const { email, rewardType } = req.body;
+  const currentDate = new Date();
+
+  if (!email || !rewardType) return res.status(400).json({ message: 'Email and rewardType are required' });
 
   try {
-    const reward = await Rewards.findOne({ username });
+    let reward = await Rewards.findOne({ email });
+
     if (!reward) {
-      return res.status(404).json({ message: 'User not found.' });
+      reward = new Rewards({
+        email,
+        lastLoginDate: currentDate,
+        dailyStreak: 1,
+        totalStreak: 1,
+        isDailyRewardEligible: true,
+      });
+      await reward.save();
+      console.log('New user created during claim:', reward.toObject());
     }
 
     if (rewardType === 'daily' && reward.isDailyRewardEligible) {
@@ -140,7 +137,7 @@ app.patch('/reward/claim-reward', async (req, res) => {
       const dailyReward = dailyRewards.find(r => r.day === currentDay);
 
       if (!dailyReward || reward.dailyRewardsClaimed.includes(currentDay)) {
-        return res.status(400).json({ message: 'Daily reward already claimed or not eligible.' });
+        return res.status(400).json({ message: 'Daily reward already claimed or not eligible' });
       }
 
       reward.coin += dailyReward.coin;
@@ -151,40 +148,41 @@ app.patch('/reward/claim-reward', async (req, res) => {
       const streakReward = { 10: 1, 20: 2, 30: 5 }[reward.totalStreak];
 
       if (!streakReward || reward.rewardsClaimed.includes(reward.totalStreak)) {
-        return res.status(400).json({ message: 'Streak reward already claimed or not eligible.' });
+        return res.status(400).json({ message: 'Streak reward already claimed or not eligible' });
       }
 
       reward.roomCards += streakReward;
       reward.rewardsClaimed.push(reward.totalStreak);
       reward.isStreakRewardEligible = false;
     } else {
-      return res.status(400).json({ message: 'Reward already claimed or not eligible.' });
+      return res.status(400).json({ message: 'Reward not eligible' });
     }
 
     await reward.save();
+    console.log('Reward claimed:', reward.toObject());
     res.json({ message: `${rewardType === 'daily' ? 'Daily' : 'Streak'} reward claimed!`, ...reward.toObject() });
   } catch (error) {
+    console.error('Claim error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Get User Reward Info
-app.get('/reward/user/:username', async (req, res) => {
-  const { username } = req.params;
+app.get('/reward/user/:email', async (req, res) => {
+  const { email } = req.params;
 
   try {
-    const reward = await Rewards.findOne({ username });
+    const reward = await Rewards.findOne({ email });
     if (!reward) {
-      return res.status(404).json({ message: 'User not found.' });
+      console.log('User not found for get:', email);
+      return res.status(404).json({ message: 'User not found' });
     }
-
     res.json(reward.toObject());
   } catch (error) {
+    console.error('Get user error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Start Server with .env PORT fallback
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
