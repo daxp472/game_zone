@@ -10,6 +10,8 @@ import {
 } from '../Games/Game-Components/2048';
 import { calculateXP, addXPToAPI } from '../../components/Logic/xp';
 import { calculateCoins, addCoinsToAPI } from '../../components/Logic/coins';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Game2048 = () => {
     const [board, setBoard] = useState(generateBoard());
@@ -118,24 +120,38 @@ const Game2048 = () => {
             fetchLeaderboard();
         } catch (error) {
             console.error("Failed to send score:", error);
+            toast.error('Failed to update leaderboard!');
         }
     };
 
     const addXP = async (score) => {
         try {
             const email = user?.email || localStorage.getItem('email');
-            if (email) await addXPToAPI(gameId, score, email);
+            if (!email) throw new Error('No email found');
+            const xpData = await addXPToAPI(gameId, score, email);
+            const xp = calculateXP(gameId, score);
+            setEarnedXP(xp);
+            toast.success(`Earned ${xp} XP!`);
+            return xpData;
         } catch (error) {
             console.error("Failed to add XP:", error);
+            toast.error('Failed to add XP!');
         }
     };
 
     const addCoins = async (score) => {
         try {
             const email = user?.email || localStorage.getItem('email');
-            if (email) await addCoinsToAPI(gameId, score, email);
+            if (!email) throw new Error('No email found');
+            const calculatedCoins = calculateCoins(gameId, score);
+            const coinData = await addCoinsToAPI(gameId, score, email);
+            console.log('Coins API Response:', coinData); // Debug log
+            setEarnedCoins(calculatedCoins);
+            toast.success(`Earned ${calculatedCoins} Coins!`);
+            return coinData;
         } catch (error) {
-            console.error("Failed to add coins:", error);
+            console.error("Failed to add coins:", error.response?.data || error.message);
+            toast.error(`Failed to add coins: ${error.response?.data?.message || error.message}`);
         }
     };
 
@@ -178,6 +194,7 @@ const Game2048 = () => {
 
             if (result.board.some(row => row.includes(2048)) && !gameState.isWon) {
                 setGameState(prev => ({ ...prev, isWon: true, canContinue: false }));
+                toast.success('You reached 2048! Keep going or restart!');
             }
 
             if (isGameOver(result.board)) {
@@ -215,11 +232,13 @@ const Game2048 = () => {
             setMoveCount(lastState.moveCount);
             setMergeHistory(lastState.mergeHistory);
             setHistory(prev => prev.slice(0, -1));
+            toast.info('Move undone!');
         }
     };
 
     const handleContinue = () => {
         setGameState(prev => ({ ...prev, canContinue: true, isWon: false }));
+        toast.info('Continuing game!');
     };
 
     const handleRestart = () => {
@@ -242,6 +261,7 @@ const Game2048 = () => {
         setShowGameOver(false);
         setHistory([]);
         setGameState({ isOver: false, isWon: false, canContinue: false });
+        toast.success('Game restarted!');
     };
 
     const handleTouchStart = (e) => {
@@ -446,6 +466,7 @@ const Game2048 = () => {
                 />
             )}
             <Footer />
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover />
         </div>
     );
 };

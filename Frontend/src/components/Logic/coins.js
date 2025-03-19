@@ -29,11 +29,23 @@ const calculateCoins = (gameId, score) => {
 const addCoinsToAPI = async (gameId, score, email) => {
     const coins = calculateCoins(gameId, score);
     try {
-        const response = await axios.patch(`${API_URL}/reward/add-coins`, { email, coins });
+        if (!email) throw new Error('Email is required');
+        
+        const response = await axios.patch(`${API_URL}/reward/add-coins`, { 
+            email, 
+            coins 
+        }, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.data.coin === undefined) {
+            console.warn('Backend did not return updated coin value:', response.data);
+        }
+        
         return response.data;
     } catch (error) {
         console.error('Error adding Coins:', error.response?.data || error.message);
-        throw error;
+        throw new Error(`Failed to add coins: ${error.response?.data?.message || error.message}`);
     }
 };
 
