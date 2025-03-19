@@ -8,28 +8,20 @@ app.use(express.json());
 app.use(cors());
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/Rewards';
+
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log('MongoDB connected successfully'))
+  .then(() => {
+    console.log('MongoDB connected successfully');
+    // Drop problematic index on startup
+    const { dropProblematicIndex } = require('./models/Rewards');
+    return dropProblematicIndex();
+  })
   .catch(err => console.error('MongoDB connection error:', err));
 
-const rewardSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  lastLoginDate: { type: Date, default: null },
-  isDailyRewardEligible: { type: Boolean, default: false },
-  isStreakRewardEligible: { type: Boolean, default: false },
-  dailyStreak: { type: Number, default: 0 },
-  totalStreak: { type: Number, default: 0 },
-  rewardsClaimed: { type: [Number], default: [] },
-  dailyRewardsClaimed: { type: [Number], default: [] },
-  coin: { type: Number, default: 0 },
-  cash: { type: Number, default: 0 },
-  roomCards: { type: Number, default: 0 },
-});
-
-const Rewards = mongoose.model('Rewards', rewardSchema);
+const { Rewards } = require('./models/Rewards');
 
 function isConsecutiveDay(lastDate, currentDate) {
   const last = new Date(lastDate);
