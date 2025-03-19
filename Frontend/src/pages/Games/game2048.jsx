@@ -8,8 +8,8 @@ import {
     generateBoard, placeRandom, isGameOver, arraysEqual,
     moveUp, moveDown, moveLeft, moveRight, getCellColor 
 } from '../Games/Game-Components/2048';
-import { calculateXP, addXPToAPI } from '../../components/Logic/xp'; // Importing from xp.js
-import { calculateCoins, addCoinsToAPI } from '../../components/Logic/coins'; // Importing from coins.js
+import { calculateXP, addXPToAPI } from '../../components/Logic/xp';
+import { calculateCoins, addCoinsToAPI } from '../../components/Logic/coins';
 
 const Game2048 = () => {
     const [board, setBoard] = useState(generateBoard());
@@ -26,7 +26,7 @@ const Game2048 = () => {
     const [earnedCoins, setEarnedCoins] = useState(0);
     const [achievements, setAchievements] = useState([]);
     const [showGameOver, setShowGameOver] = useState(false);
-    const [history, setHistory] = useState([]); // For undo feature
+    const [history, setHistory] = useState([]);
 
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -124,10 +124,7 @@ const Game2048 = () => {
     const addXP = async (score) => {
         try {
             const email = user?.email || localStorage.getItem('email');
-            if (email) {
-                await addXPToAPI(gameId, score, email); // Fixed to use fetch from xp.js
-                console.log(`Added ${calculateXP(gameId, score)} XP for ${email}`);
-            }
+            if (email) await addXPToAPI(gameId, score, email);
         } catch (error) {
             console.error("Failed to add XP:", error);
         }
@@ -136,10 +133,7 @@ const Game2048 = () => {
     const addCoins = async (score) => {
         try {
             const email = user?.email || localStorage.getItem('email');
-            if (email) {
-                await addCoinsToAPI(gameId, score, email); // Fixed to use fetch from coins.js
-                console.log(`Added ${calculateCoins(gameId, score)} Coins for ${email}`);
-            }
+            if (email) await addCoinsToAPI(gameId, score, email);
         } catch (error) {
             console.error("Failed to add coins:", error);
         }
@@ -166,8 +160,7 @@ const Game2048 = () => {
     }, [gameState]);
 
     const handleMove = useCallback((moveFunction) => {
-        // Save current state for undo
-        setHistory(prev => [...prev, { board: JSON.parse(JSON.stringify(boardRef.current)), score: scoreRef.current, maxTile: maxTileRef.current, moveCount: moveCountRef.current, mergeHistory: [...mergeHistoryRef.current] }].slice(-1)); // Keep only last move
+        setHistory(prev => [...prev, { board: JSON.parse(JSON.stringify(boardRef.current)), score: scoreRef.current, maxTile: maxTileRef.current, moveCount: moveCountRef.current, mergeHistory: [...mergeHistoryRef.current] }].slice(-1));
 
         const result = moveFunction(boardRef.current);
         if (!arraysEqual(result.board, boardRef.current)) {
@@ -221,7 +214,7 @@ const Game2048 = () => {
             setMaxTile(lastState.maxTile);
             setMoveCount(lastState.moveCount);
             setMergeHistory(lastState.mergeHistory);
-            setHistory(prev => prev.slice(0, -1)); // Remove the last history entry
+            setHistory(prev => prev.slice(0, -1));
         }
     };
 
@@ -247,7 +240,7 @@ const Game2048 = () => {
         setEarnedCoins(0);
         setAchievements([]);
         setShowGameOver(false);
-        setHistory([]); // Reset history on restart
+        setHistory([]);
         setGameState({ isOver: false, isWon: false, canContinue: false });
     };
 
