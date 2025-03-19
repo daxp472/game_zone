@@ -29,27 +29,19 @@ function Popup() {
       try {
         const loginResponse = await axios.post('https://game-zone-reward.onrender.com/reward/login', { email });
         if (!loginResponse.data) throw new Error('Login failed, no data returned');
-        console.log('Login Response:', loginResponse.data); // Debug
+        console.log('Login Response:', loginResponse.data);
+
+        // Wait for backend sync
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         const userResponse = await axios.get(`https://game-zone-reward.onrender.com/reward/user/${email}`);
-        console.log('User Data:', userResponse.data); // Debug
+        console.log('User Data:', userResponse.data);
         setUserData(userResponse.data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error.response?.data || error.message);
+        toast.error(error.response?.data?.message || 'Failed to load user data');
         setLoading(false);
-        toast.error('Failed to load user data');
-        setUserData({
-          email,
-          dailyStreak: 1,
-          totalStreak: 1,
-          coin: 0,
-          cash: 0,
-          roomCards: 0,
-          isDailyRewardEligible: true,
-          isStreakRewardEligible: false,
-          dailyRewardsClaimed: [],
-          rewardsClaimed: [],
-        });
       }
     };
     fetchUserData();
@@ -66,7 +58,7 @@ function Popup() {
         email,
         rewardType: 'daily',
       });
-      console.log('Claim Response:', response.data); // Debug
+      console.log('Claim Response:', response.data);
       setUserData(response.data);
       toast.success(response.data.message);
     } catch (error) {
@@ -86,6 +78,7 @@ function Popup() {
         email,
         rewardType: 'streak',
       });
+      console.log('Claim Response:', response.data);
       setUserData(response.data);
       toast.success(response.data.message);
     } catch (error) {
@@ -113,7 +106,7 @@ function Popup() {
           return (
             <div
               key={index}
-              className={`group relative bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 text-center transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(147,51,234,0.5)] ${isCurrentDay && !isClaimed ? 'border-2 border-purple-500 animate-pulse' : ''}`}
+              className={`group relative bg-gray-800/50 backdrop-blur-md rounded-lg p-4 text-center transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(147,51,234,0.5)] ${isCurrentDay && !isClaimed ? 'border-2 border-purple-500 animate-pulse' : ''}`}
             >
               <p className="text-red-400 font-semibold">Day {dayData.day}</p>
               <p className="text-lg flex items-center justify-center gap-2">
@@ -172,7 +165,7 @@ function Popup() {
         <div>20🔥</div>
         <div>30🔥</div>
       </div>
-      <div className="mt-8 flex justify-between text-lg font-bold text-white font-mono bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-purple-500/30">
+      <div className="mt-8 flex justify-between text-lg font-bold text-white font-mono bg-gray-800/50 backdrop-blur-md p-4 rounded-lg border border-purple-500/30">
         <p className="flex items-center gap-2 animate-[bounce_2s_infinite]">
           Coins: {userData.coin || 0} <FaCoins className="text-yellow-400 text-2xl" />
         </p>

@@ -59,7 +59,7 @@ app.post('/reward/login', async (req, res) => {
         isDailyRewardEligible: true,
       });
       await reward.save();
-      console.log('New user created:', reward); // Debug log
+      console.log('New user created and saved:', reward.toObject());
       return res.status(201).json({ message: 'Welcome! Daily streak started.', ...reward.toObject() });
     }
 
@@ -95,6 +95,7 @@ app.post('/reward/login', async (req, res) => {
     reward.lastLoginDate = currentDate;
 
     await reward.save();
+    console.log('User updated:', reward.toObject());
     res.json({ message: 'Login successful!', ...reward.toObject() });
   } catch (error) {
     console.error('Login error:', error);
@@ -120,7 +121,7 @@ app.patch('/reward/claim-reward', async (req, res) => {
   try {
     let reward = await Rewards.findOne({ email });
     if (!reward) {
-      console.log('User not found for claim:', email); // Debug log
+      console.log('User not found for claim:', email);
       return res.status(404).json({ message: 'User not found. Please login first.' });
     }
 
@@ -151,6 +152,7 @@ app.patch('/reward/claim-reward', async (req, res) => {
     }
 
     await reward.save();
+    console.log('Reward claimed:', reward.toObject());
     res.json({ message: `${rewardType === 'daily' ? 'Daily' : 'Streak'} reward claimed!`, ...reward.toObject() });
   } catch (error) {
     console.error('Claim error:', error);
@@ -163,7 +165,10 @@ app.get('/reward/user/:email', async (req, res) => {
 
   try {
     const reward = await Rewards.findOne({ email });
-    if (!reward) return res.status(404).json({ message: 'User not found' });
+    if (!reward) {
+      console.log('User not found for get:', email);
+      return res.status(404).json({ message: 'User not found' });
+    }
     res.json(reward.toObject());
   } catch (error) {
     console.error('Get user error:', error);
