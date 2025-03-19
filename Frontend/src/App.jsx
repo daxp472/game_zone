@@ -34,6 +34,7 @@ import Notifications from './pages/Profile/Notifications';
 import GlobalPerformance from './pages/Profile/GlobalPerformance';
 import Settings1 from './pages/Profile/Settings';
 import ForgotPassword from './pages/Profile/UpdatePassword';
+import LevelPath from '../src/components/Profile/LevelPath';
 // import Settings from './pages/Settings';
 
 
@@ -50,7 +51,7 @@ import Sports from "./pages/category/Sports";
 import Strategy from "./pages/category/Strategy";
 import Adventure from "./pages/category/Adventure";
 
-import Game2048 from "./pages/Games/2048";
+import Game2048 from "./pages/Games/game2048";
 import GameHangman from "./pages/Games/hangman";
 import GameXO from "./pages/Games/xo";
 import GameFlappy from "./pages/Games/Flappy-bird"
@@ -141,6 +142,7 @@ function App() {
               <Route path="/profile/global-performance" element={<PrivateRoute><GlobalPerformance /></PrivateRoute>} />
               <Route path="/profile/settings" element={<PrivateRoute><Settings1 /></PrivateRoute>} />
               <Route path="/profile/:username/settings/forgot-password" element={<PrivateRoute><ForgotPassword /></PrivateRoute>} />
+              <Route path="/profile/level" element={<PrivateRoute><LevelPath /></PrivateRoute>} />
               {/* <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} /> */}
 
 

@@ -13,6 +13,7 @@ const rewardSchema = new mongoose.Schema({
   coin: { type: Number, default: 0 },
   cash: { type: Number, default: 0 },
   roomCards: { type: Number, default: 0 },
+  collectedLevelRewards: { type: [Number], default: [] }, // Added this field for level rewards
 });
 
 // Create compound index to ensure uniqueness
