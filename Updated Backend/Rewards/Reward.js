@@ -5,7 +5,13 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+// CORS configuration - Allow localhost:5173 explicitly
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://gamezoneofficial.netlify.app'], // Add your frontend domain if deployed
+  methods: ['GET', 'POST', 'PATCH'],
+  allowedHeaders: ['Content-Type'],
+}));
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/Rewards';
 
@@ -15,7 +21,7 @@ mongoose.connect(MONGODB_URI, {
 })
   .then(() => {
     console.log('MongoDB connected successfully');
-    // Drop problematic index on startup
+    // Drop problematic index on startup (if needed)
     const { dropProblematicIndex } = require('./models/Rewards');
     return dropProblematicIndex();
   })
