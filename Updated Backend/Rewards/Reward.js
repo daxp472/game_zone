@@ -6,9 +6,9 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 
-// CORS configuration - Allow localhost:5173 explicitly
+// CORS configuration - Allow localhost:5173 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://gamezoneofficial.netlify.app'], // Add your frontend domain if deployed
+  origin: ['http://localhost:5173', 'https://gamezoneofficial.netlify.app'], 
   methods: ['GET', 'POST', 'PATCH'],
   allowedHeaders: ['Content-Type'],
 }));

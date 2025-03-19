@@ -50,7 +50,7 @@ import Sports from "./pages/category/Sports";
 import Strategy from "./pages/category/Strategy";
 import Adventure from "./pages/category/Adventure";
 
-import Game2048 from "./pages/Games/2048";
+import Game2048 from "./pages/Games/game2048";
 import GameHangman from "./pages/Games/hangman";
 import GameXO from "./pages/Games/xo";
 import GameFlappy from "./pages/Games/Flappy-bird"
