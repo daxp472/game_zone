@@ -115,14 +115,23 @@ const dailyRewards = [
 
 app.patch('/reward/claim-reward', async (req, res) => {
   const { email, rewardType } = req.body;
+  const currentDate = new Date();
 
   if (!email || !rewardType) return res.status(400).json({ message: 'Email and rewardType are required' });
 
   try {
     let reward = await Rewards.findOne({ email });
+
     if (!reward) {
-      console.log('User not found for claim:', email);
-      return res.status(404).json({ message: 'User not found. Please login first.' });
+      reward = new Rewards({
+        email,
+        lastLoginDate: currentDate,
+        dailyStreak: 1,
+        totalStreak: 1,
+        isDailyRewardEligible: true,
+      });
+      await reward.save();
+      console.log('New user created during claim:', reward.toObject());
     }
 
     if (rewardType === 'daily' && reward.isDailyRewardEligible) {

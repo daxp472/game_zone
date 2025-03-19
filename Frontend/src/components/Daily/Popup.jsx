@@ -28,19 +28,24 @@ function Popup() {
     const fetchUserData = async () => {
       try {
         const loginResponse = await axios.post('https://game-zone-reward.onrender.com/reward/login', { email });
-        if (!loginResponse.data) throw new Error('Login failed, no data returned');
         console.log('Login Response:', loginResponse.data);
-
-        // Wait for backend sync
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const userResponse = await axios.get(`https://game-zone-reward.onrender.com/reward/user/${email}`);
-        console.log('User Data:', userResponse.data);
-        setUserData(userResponse.data);
+        setUserData(loginResponse.data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error.response?.data || error.message);
-        toast.error(error.response?.data?.message || 'Failed to load user data');
+        toast.error('Initializing user data...');
+        setUserData({
+          email,
+          dailyStreak: 1,
+          totalStreak: 1,
+          coin: 0,
+          cash: 0,
+          roomCards: 0,
+          isDailyRewardEligible: true,
+          isStreakRewardEligible: false,
+          dailyRewardsClaimed: [],
+          rewardsClaimed: [],
+        });
         setLoading(false);
       }
     };
@@ -88,9 +93,8 @@ function Popup() {
   };
 
   if (loading) return <div className="text-white text-center text-2xl">Loading...</div>;
-  if (!userData) return <div className="text-white text-center text-2xl">No user data available.</div>;
 
-  const progressPercentage = (userData.totalStreak / maxStreak) * 100;
+  const progressPercentage = (userData?.totalStreak || 0) / maxStreak * 100;
 
   return (
     <div className="w-full p-6 bg-gray-900/80 backdrop-blur-md rounded-xl shadow-2xl border border-purple-500/30">
@@ -99,9 +103,9 @@ function Popup() {
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
         {dailyRewards.map((dayData, index) => {
-          const isCurrentDay = userData.dailyStreak === dayData.day;
-          const isClaimed = Array.isArray(userData.dailyRewardsClaimed) && userData.dailyRewardsClaimed.includes(dayData.day);
-          const isDisabled = !isCurrentDay || isClaimed || !userData.isDailyRewardEligible;
+          const isCurrentDay = userData?.dailyStreak === dayData.day;
+          const isClaimed = Array.isArray(userData?.dailyRewardsClaimed) && userData.dailyRewardsClaimed.includes(dayData.day);
+          const isDisabled = !isCurrentDay || isClaimed || !userData?.isDailyRewardEligible;
 
           return (
             <div
@@ -132,15 +136,15 @@ function Popup() {
           style={{ width: `${progressPercentage}%` }}
         />
         <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg drop-shadow">
-          {userData.totalStreak}🔥 Streak
+          {userData?.totalStreak || 0}🔥 Streak
         </div>
         {[
           { milestone: 10, reward: '1' },
           { milestone: 20, reward: '2' },
           { milestone: 30, reward: '5' },
         ].map(({ milestone, reward }) => {
-          const rewardsClaimed = Array.isArray(userData.rewardsClaimed) ? userData.rewardsClaimed : [];
-          const isEligible = userData.totalStreak === milestone && !rewardsClaimed.includes(milestone) && userData.isStreakRewardEligible;
+          const rewardsClaimed = Array.isArray(userData?.rewardsClaimed) ? userData.rewardsClaimed : [];
+          const isEligible = (userData?.totalStreak || 0) === milestone && !rewardsClaimed.includes(milestone) && userData?.isStreakRewardEligible;
           const isClaimed = rewardsClaimed.includes(milestone);
 
           return (
@@ -167,13 +171,13 @@ function Popup() {
       </div>
       <div className="mt-8 flex justify-between text-lg font-bold text-white font-mono bg-gray-800/50 backdrop-blur-md p-4 rounded-lg border border-purple-500/30">
         <p className="flex items-center gap-2 animate-[bounce_2s_infinite]">
-          Coins: {userData.coin || 0} <FaCoins className="text-yellow-400 text-2xl" />
+          Coins: {userData?.coin || 0} <FaCoins className="text-yellow-400 text-2xl" />
         </p>
         <p className="flex items-center gap-2 animate-[bounce_2s_infinite_0.2s]">
-          Cash: {userData.cash || 0} <FaMoneyBill className="text-green-400 text-2xl" />
+          Cash: {userData?.cash || 0} <FaMoneyBill className="text-green-400 text-2xl" />
         </p>
         <p className="flex items-center gap-2 animate-[bounce_2s_infinite_0.4s]">
-          Room Cards: {userData.roomCards || 0} <GiSwipeCard className="text-red-600 text-2xl" />
+          Room Cards: {userData?.roomCards || 0} <GiSwipeCard className="text-red-600 text-2xl" />
         </p>
       </div>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick draggable />
