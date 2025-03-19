@@ -4,6 +4,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import GameNavbar from '../../components/GameNavbar';
 import axios from 'axios';
 import { FaCoins, FaMoneyBillWave, FaCreditCard } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // XP Thresholds for Levels (Up to Level 50)
 const xpThresholds = [
@@ -41,7 +43,7 @@ const LevelPath = () => {
 
                 // Fetch XP and Level
                 const xpResponse = await axios.get(`${XP_API_URL}/xp/${email}`);
-                setCurrentXP(xpResponse.data.xpAmount || 0);
+                setCurrentXP(xpResponse.data.xp || 0); // Fixed: xpAmount
                 setCurrentLevel(xpResponse.data.level || 1);
 
                 // Fetch Reward Data
@@ -49,6 +51,7 @@ const LevelPath = () => {
                 setCollectedRewards(rewardResponse.data.collectedLevelRewards || []);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
+                toast.error('Failed to load data!');
             } finally {
                 setLoading(false);
             }
@@ -66,17 +69,17 @@ const LevelPath = () => {
             try {
                 const email = user?.email || localStorage.getItem('email');
                 const reward = levelRewards[level - 1];
-                await axios.patch(`${REWARD_API_URL}/reward/collect-level-reward`, {
+                const response = await axios.patch(`${REWARD_API_URL}/reward/collect-level-reward`, {
                     email,
                     level,
                     rewardType: reward.type,
                     amount: reward.amount,
                 });
                 setCollectedRewards([...collectedRewards, level]);
-                alert(`Collected ${reward.amount} ${reward.type} for Level ${level}!`);
+                toast.success(`Collected ${reward.amount} ${reward.type} for Level ${level}!`);
             } catch (error) {
-                console.error('Failed to collect reward:', error);
-                alert('Error collecting reward!');
+                console.error('Failed to collect reward:', error.response?.data || error.message);
+                toast.error('Error collecting reward!');
             }
         }
     };
@@ -179,6 +182,7 @@ const LevelPath = () => {
                     ))}
                 </div>
             </div>
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover />
         </div>
     );
 };

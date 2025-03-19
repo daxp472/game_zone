@@ -39,7 +39,7 @@ const ProfileHeader = () => {
                 const email = user?.email || localStorage.getItem('email');
                 if (email) {
                     const xpData = await getXPFromAPI(email);
-                    const xp = xpData.xpAmount || 0;
+                    const xp = xpData.xp || 0;
                     const level = xpData.level || 1;
                     setCurrentXP(xp);
                     setCurrentLevel(level);
