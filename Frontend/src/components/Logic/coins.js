@@ -43,7 +43,7 @@ const addCoinsToAPI = async (gameId, score, email) => {
 
 const getCoinsFromAPI = async (email) => {
     try {
-        const response = await fetch(`${API_URL}/coins/get?email=${email}`, { // Fixed query string
+        const response = await fetch(`${API_URL}/coins/get?email=${email}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         });
