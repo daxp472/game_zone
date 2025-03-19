@@ -1,4 +1,4 @@
-const API_URL = 'https://example.com/api'; // Replace with your actual API URL
+const API_URL = 'https://game-zone-xp-and-stats.onrender.com//api'; // Replace with your actual API URL
 const API_ENDPOINTS = {
   ADD_XP: '/api/xp/add',
   GET_XP: '/api/xp',

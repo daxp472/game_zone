@@ -3,12 +3,14 @@ import { FaCoins, FaMoneyBill } from 'react-icons/fa';
 import { GiSwipeCard } from 'react-icons/gi';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Popup() {
   const [userData, setUserData] = useState(null);
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const email = user.email; // username → email
+  const email = user.email;
 
   const dailyRewards = [
     { day: 1, coins: 30, cash: 0, icon: <FaCoins className="text-yellow-400 text-2xl" /> },
@@ -25,47 +27,70 @@ function Popup() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        await axios.post('https://game-zone-reward.onrender.com/reward/login', { email }); // username → email
-        const response = await axios.get(`https://game-zone-reward.onrender.com/reward/user/${email}`); // username → email
-        setUserData(response.data);
+        const loginResponse = await axios.post('https://game-zone-reward.onrender.com/reward/login', { email });
+        if (!loginResponse.data) throw new Error('Login failed, no data returned');
+        console.log('Login Response:', loginResponse.data); // Debug
+        const userResponse = await axios.get(`https://game-zone-reward.onrender.com/reward/user/${email}`);
+        console.log('User Data:', userResponse.data); // Debug
+        setUserData(userResponse.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching user data:', error.response?.data || error.message);
         setLoading(false);
+        toast.error('Failed to load user data');
+        setUserData({
+          email,
+          dailyStreak: 1,
+          totalStreak: 1,
+          coin: 0,
+          cash: 0,
+          roomCards: 0,
+          isDailyRewardEligible: true,
+          isStreakRewardEligible: false,
+          dailyRewardsClaimed: [],
+          rewardsClaimed: [],
+        });
       }
     };
     fetchUserData();
   }, [email]);
 
   const handleDailyClaim = async (day) => {
-    if (!userData || day !== userData.dailyStreak || !userData.isDailyRewardEligible) return;
+    if (!userData || day !== userData.dailyStreak || !userData.isDailyRewardEligible) {
+      toast.error('Not eligible for daily reward');
+      return;
+    }
 
     try {
       const response = await axios.patch('https://game-zone-reward.onrender.com/reward/claim-reward', {
-        email, // username → email
+        email,
         rewardType: 'daily',
       });
+      console.log('Claim Response:', response.data); // Debug
       setUserData(response.data);
-      alert(response.data.message);
+      toast.success(response.data.message);
     } catch (error) {
-      console.error('Error claiming daily reward:', error);
-      alert('Failed to claim daily reward.');
+      console.error('Claim error:', error.response?.data || error.message);
+      toast.error(error.response?.data?.message || 'Failed to claim daily reward');
     }
   };
 
   const handleStreakClaim = async () => {
-    if (!userData || !userData.isStreakRewardEligible) return;
+    if (!userData || !userData.isStreakRewardEligible) {
+      toast.error('Not eligible for streak reward');
+      return;
+    }
 
     try {
       const response = await axios.patch('https://game-zone-reward.onrender.com/reward/claim-reward', {
-        email, // username → email
+        email,
         rewardType: 'streak',
       });
       setUserData(response.data);
-      alert(response.data.message);
+      toast.success(response.data.message);
     } catch (error) {
-      console.error('Error claiming streak reward:', error);
-      alert('Failed to claim streak reward.');
+      console.error('Claim error:', error.response?.data || error.message);
+      toast.error(error.response?.data?.message || 'Failed to claim streak reward');
     }
   };
 
@@ -76,12 +101,9 @@ function Popup() {
 
   return (
     <div className="w-full p-6 bg-gray-900/80 backdrop-blur-md rounded-xl shadow-2xl border border-purple-500/30">
-      {/* Heading */}
       <h2 className="text-4xl mb-8 font-extrabold text-center animate-pulse bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
         Daily Login Rewards
       </h2>
-
-      {/* Daily Rewards Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
         {dailyRewards.map((dayData, index) => {
           const isCurrentDay = userData.dailyStreak === dayData.day;
@@ -108,13 +130,9 @@ function Popup() {
           );
         })}
       </div>
-
-      {/* Streak Rewards Heading */}
       <h2 className="text-4xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
         Streak Rewards
       </h2>
-
-      {/* Streak Progress Bar */}
       <div className="relative bg-gray-800 rounded-full h-8 mt-12 overflow-hidden">
         <div
           className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 animate-gradient-x"
@@ -123,7 +141,6 @@ function Popup() {
         <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg drop-shadow">
           {userData.totalStreak}🔥 Streak
         </div>
-
         {[
           { milestone: 10, reward: '1' },
           { milestone: 20, reward: '2' },
@@ -149,16 +166,12 @@ function Popup() {
           );
         })}
       </div>
-
-      {/* Streak Milestones */}
       <div className="flex justify-between text-center mt-4 text-white font-semibold text-lg">
         <div>0🔥</div>
         <div>10🔥</div>
         <div>20🔥</div>
         <div>30🔥</div>
       </div>
-
-      {/* Stats Section */}
       <div className="mt-8 flex justify-between text-lg font-bold text-white font-mono bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg border border-purple-500/30">
         <p className="flex items-center gap-2 animate-[bounce_2s_infinite]">
           Coins: {userData.coin || 0} <FaCoins className="text-yellow-400 text-2xl" />
@@ -170,6 +183,7 @@ function Popup() {
           Room Cards: {userData.roomCards || 0} <GiSwipeCard className="text-red-600 text-2xl" />
         </p>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick draggable />
     </div>
   );
 }
