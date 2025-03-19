@@ -59,7 +59,8 @@ app.post('/reward/login', async (req, res) => {
         isDailyRewardEligible: true,
       });
       await reward.save();
-      return res.json({ message: 'Welcome! Daily streak started.', ...reward.toObject() });
+      console.log('New user created:', reward); // Debug log
+      return res.status(201).json({ message: 'Welcome! Daily streak started.', ...reward.toObject() });
     }
 
     const lastLogin = new Date(reward.lastLoginDate);
@@ -97,7 +98,7 @@ app.post('/reward/login', async (req, res) => {
     res.json({ message: 'Login successful!', ...reward.toObject() });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Failed to login or create user', error: error.message });
   }
 });
 
@@ -117,8 +118,11 @@ app.patch('/reward/claim-reward', async (req, res) => {
   if (!email || !rewardType) return res.status(400).json({ message: 'Email and rewardType are required' });
 
   try {
-    const reward = await Rewards.findOne({ email });
-    if (!reward) return res.status(404).json({ message: 'User not found' });
+    let reward = await Rewards.findOne({ email });
+    if (!reward) {
+      console.log('User not found for claim:', email); // Debug log
+      return res.status(404).json({ message: 'User not found. Please login first.' });
+    }
 
     if (rewardType === 'daily' && reward.isDailyRewardEligible) {
       const currentDay = reward.dailyStreak;
