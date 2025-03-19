@@ -1,4 +1,4 @@
-const API_URL = 'https://example.com/api';
+const API_URL = 'https://game-zone-reward.onrender.com/api';
 const API_ENDPOINTS = {
   ADD_COINS: '/coins/add',
   GET_COINS: '/coins/get',
