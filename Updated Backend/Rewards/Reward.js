@@ -187,6 +187,47 @@ app.get('/reward/user/:email', async (req, res) => {
     }
 });
 
+app.patch('/reward/collect-level-reward', async (req, res) => {
+    const { email, level, rewardType, amount } = req.body;
+
+    if (!email || !level || !rewardType || !amount) {
+        return res.status(400).json({ message: 'Email, level, rewardType, and amount are required' });
+    }
+
+    try {
+        let reward = await Rewards.findOne({ email });
+        if (!reward) {
+            reward = new Rewards({ email, collectedLevelRewards: [] });
+        }
+
+        if (reward.collectedLevelRewards.includes(level)) {
+            return res.status(400).json({ message: 'Reward already collected for this level' });
+        }
+
+        switch (rewardType) {
+            case 'coins':
+                reward.coin = (reward.coin || 0) + amount;
+                break;
+            case 'cash':
+                reward.cash = (reward.cash || 0) + amount;
+                break;
+            case 'roomCards':
+                reward.roomCards = (reward.roomCards || 0) + amount;
+                break;
+            default:
+                return res.status(400).json({ message: 'Invalid reward type' });
+        }
+
+        reward.collectedLevelRewards = reward.collectedLevelRewards || [];
+        reward.collectedLevelRewards.push(level);
+        await reward.save();
+        res.json({ message: `Level ${level} reward collected!`, ...reward.toObject() });
+    } catch (error) {
+        console.error('Collect level reward error:', error);
+        res.status(500).json({ message: 'Failed to collect level reward', error: error.message });
+    }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
