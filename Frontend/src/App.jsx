@@ -175,6 +175,10 @@ function App() {
               <Route path="/game/game-3" element={<PrivateRoute><GameFlappy /></PrivateRoute>} />
               <Route path="/game/game-4" element={<PrivateRoute><GameAngryBird /></PrivateRoute>} />
 
+
+              {/* Fallback Route */}
+              {/* <Route path="/error" element={<ErrorBoundary/>} /> */}
+
             </Routes>
             <MobileNavigation />
           </div>
