@@ -1,43 +1,58 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { gsap } from 'gsap';
 import { useAuth } from '../../contexts/AuthContext';
 import * as THREE from 'three';
 import NET from 'vanta/dist/vanta.net.min';
+import { FaEnvelope, FaLock, FaGoogle, FaDiscord, FaSpinner } from 'react-icons/fa';
 import WelcomeAnimation from '../../components/WelcomeAnimation';
+import { toast } from 'react-toastify';
 
-function Login() {
+const Login = memo(() => {
   const [showWelcome, setShowWelcome] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const vantaRef = useRef(null);
   const vantaEffect = useRef(null);
+  const buttonRef = useRef(null);
 
   useEffect(() => {
-    if (!vantaEffect.current) {
-      vantaEffect.current = NET({
-        el: vantaRef.current,
-        THREE,
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.00,
-        minWidth: 200.00,
-        scale: 1.00,
-        scaleMobile: 1.00,
-        color: 0x9333ea,
-        backgroundColor: 0x13141f,
-        points: 10.00,
-        maxDistance: 25.00,
-        spacing: 17.00
-      });
-    }
+    // Vanta NET Background
+    vantaEffect.current = NET({
+      el: vantaRef.current,
+      THREE,
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.0,
+      minWidth: 200.0,
+      scale: 1.0,
+      scaleMobile: 0.8,
+      color: 0x9333ea,
+      backgroundColor: 0x0a0b13,
+      points: 12.0,
+      maxDistance: 20.0,
+      spacing: 15.0,
+    });
+
+    // GSAP Button Ripple Effect
+    const button = buttonRef.current;
+    gsap.fromTo(
+      button,
+      { scale: 1 },
+      {
+        scale: 1.05,
+        repeat: -1,
+        yoyo: true,
+        duration: 1.5,
+        ease: 'power1.inOut',
+      }
+    );
+
     return () => {
       if (vantaEffect.current) vantaEffect.current.destroy();
     };
@@ -47,114 +62,180 @@ function Login() {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-    
+
     try {
       await login(formData);
+      toast.success('Logged in successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        theme: 'dark',
+      });
       navigate('/home');
     } catch (err) {
       setError(err.message);
+      gsap.to('.error-message', {
+        x: -10,
+        duration: 0.1,
+        repeat: 3,
+        yoyo: true,
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleSocialLogin = (provider) => {
+    toast.info(`Social login with ${provider} coming soon!`, {
+      position: 'top-right',
+      autoClose: 3000,
+      theme: 'dark',
+    });
+  };
+
+  // Animation Variants
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 0, scale: 0.8 },
     visible: {
       opacity: 1,
+      scale: 1,
       transition: {
-        duration: 0.5,
-        when: "beforeChildren",
-        staggerChildren: 0.1
-      }
-    }
+        duration: 0.8,
+        when: 'beforeChildren',
+        staggerChildren: 0.15,
+      },
+    },
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
-        stiffness: 100
-      }
-    }
+        type: 'spring',
+        stiffness: 120,
+        damping: 20,
+      },
+    },
+  };
+
+  const errorVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { type: 'spring', stiffness: 200 },
+    },
   };
 
   if (showWelcome) {
     return <WelcomeAnimation onComplete={() => setShowWelcome(false)} />;
   }
 
-
   return (
-    <div className="min-h-screen bg-[#13141f] relative overflow-hidden" ref={vantaRef}>
-      <div className="absolute inset-0 z-0"></div>
-      
-      <motion.div 
-        className="relative z-10 min-h-screen flex items-center justify-center px-4"
+    <div className="min-h-screen relative overflow-hidden font-orbitron" ref={vantaRef}>
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0b13]/90 via-[#13141f]/80 to-[#1a1b26]/90 z-0"></div>
+
+      {/* Floating Particles */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-purple-400 rounded-full animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      <motion.div
+        className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        <motion.div 
-          className="bg-[#1a1b26] p-8 rounded-lg shadow-xl w-full max-w-md backdrop-blur-lg bg-opacity-90"
+        {/* GameZone Logo */}
+        <motion.div
+          className="mb-12 text-center"
+          variants={itemVariants}
+          whileHover={{ scale: 1.1, rotate: 5 }}
+        >
+          <h1 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+            GameZone
+          </h1>
+          <p className="text-gray-300 text-lg mt-2">Your Ultimate Gaming Hub</p>
+        </motion.div>
+
+        {/* Login Form */}
+        <motion.div
+          className="bg-[#1a1b26]/90 p-10 rounded-2xl shadow-2xl w-full max-w-lg backdrop-blur-xl border border-purple-500/30"
           variants={itemVariants}
         >
-          <motion.div 
-            className="text-center mb-8"
-            variants={itemVariants}
-          >
-            <h2 className="text-4xl font-bold text-white mb-2">Welcome Back</h2>
-            <p className="text-gray-400">Enter your credentials to continue</p>
+          <motion.div className="text-center mb-10" variants={itemVariants}>
+            <h2 className="text-4xl font-bold text-white mb-3">Welcome Back, Gamer!</h2>
+            <p className="text-gray-400 text-sm">Log in to join epic battles and tournaments</p>
           </motion.div>
 
-          {error && (
-            <motion.div 
-              className="bg-red-500 bg-opacity-90 text-white p-4 rounded-lg mb-6"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 200 }}
-            >
-              {error}
-            </motion.div>
-          )}
+          {/* Error Message */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                className="bg-red-600/90 text-white p-4 rounded-lg mb-8 error-message"
+                variants={errorVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+              >
+                <FaSpinner className="inline mr-2 animate-spin" />
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-8">
             <motion.div variants={itemVariants}>
-              <label className="block text-gray-300 mb-2 text-sm font-medium">Email or Username</label>
+              <label className="block text-gray-200 mb-2 text-sm font-medium">Email or Username</label>
               <div className="relative">
+                <FaEnvelope className="absolute top-1/2 left-4 transform -translate-y-1/2 text-purple-400" />
                 <input
                   type="text"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full bg-[#2a2b36] text-white p-3 rounded-lg focus:ring-2 focus:ring-purple-600 focus:outline-none transition-all duration-200"
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full bg-[#2a2b36]/80 text-white p-4 pl-12 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none transition-all duration-300 border border-gray-700/50"
                   required
+                  placeholder="Enter email or username"
                 />
-                <motion.div 
-                  className="absolute left-0 bottom-0 h-0.5 bg-purple-600"
+                <motion.div
+                  className="absolute left-0 bottom-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500"
                   initial={{ width: 0 }}
-                  whileFocus={{ width: "100%" }}
-                  transition={{ duration: 0.2 }}
+                  whileFocus={{ width: '100%' }}
+                  transition={{ duration: 0.3 }}
                 />
               </div>
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <label className="block text-gray-300 mb-2 text-sm font-medium">Password</label>
+              <label className="block text-gray-200 mb-2 text-sm font-medium">Password</label>
               <div className="relative">
+                <FaLock className="absolute top-1/2 left-4 transform -translate-y-1/2 text-purple-400" />
                 <input
                   type="password"
                   value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  className="w-full bg-[#2a2b36] text-white p-3 rounded-lg focus:ring-2 focus:ring-purple-600 focus:outline-none transition-all duration-200"
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full bg-[#2a2b36]/80 text-white p-4 pl-12 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none transition-all duration-300 border border-gray-700/50"
                   required
+                  placeholder="Enter password"
                 />
-                <motion.div 
-                  className="absolute left-0 bottom-0 h-0.5 bg-purple-600"
+                <motion.div
+                  className="absolute left-0 bottom-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500"
                   initial={{ width: 0 }}
-                  whileFocus={{ width: "100%" }}
-                  transition={{ duration: 0.2 }}
+                  whileFocus={{ width: '100%' }}
+                  transition={{ duration: 0.3 }}
                 />
               </div>
             </motion.div>
@@ -162,53 +243,103 @@ function Login() {
             <motion.button
               type="submit"
               disabled={isLoading}
-              className={`w-full bg-purple-600 text-white py-3 rounded-lg font-medium
-                ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purple-700'} 
-                transition-all duration-200 transform hover:scale-[1.02]`}
+              ref={buttonRef}
+              className={`w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-lg font-medium
+                ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-[0_0_20px_rgba(139,92,246,0.7)]'}
+                transition-all duration-300 transform hover:scale-[1.03]`}
               variants={itemVariants}
               whileTap={{ scale: 0.95 }}
+              whileHover={{ y: -2 }}
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  <FaSpinner className="animate-spin mr-2" />
                   Logging in...
                 </div>
               ) : (
-                'Login'
+                'Enter the Arena'
               )}
             </motion.button>
-
-            <motion.div 
-              className="text-center mt-6"
-              variants={itemVariants}
-            >
-              <p className="text-gray-400">
-                New to GameZone?{' '}
-                <Link 
-                  to="/register" 
-                  className="text-purple-500 hover:text-purple-400 font-medium transition-colors"
-                >
-                  Create Account
-                </Link>
-              </p>
-            </motion.div>
           </form>
 
-          <motion.div 
-            className="mt-8 pt-6 border-t border-gray-700"
-            variants={itemVariants}
-          >
+          {/* Social Login */}
+          <motion.div className="mt-8" variants={itemVariants}>
+            <p className="text-center text-gray-400 mb-4">Or log in with</p>
+            <div className="flex justify-center gap-4">
+              <motion.button
+                className="flex items-center px-6 py-3 bg-gray-700/80 text-white rounded-lg hover:bg-gray-600 transition-all duration-300"
+                onClick={() => handleSocialLogin('Google')}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FaGoogle className="mr-2" />
+                Google
+              </motion.button>
+              <motion.button
+                className="flex items-center px-6 py-3 bg-gray-700/80 text-white rounded-lg hover:bg-gray-600 transition-all duration-300"
+                onClick={() => handleSocialLogin('Discord')}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FaDiscord className="mr-2" />
+                Discord
+              </motion.button>
+            </div>
+          </motion.div>
+
+          {/* Links */}
+          <motion.div className="text-center mt-8" variants={itemVariants}>
+            <p className="text-gray-400">
+              New to GameZone?{' '}
+              <Link
+                to="/register"
+                className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
+              >
+                Create Account
+              </Link>
+            </p>
+          </motion.div>
+
+          {/* Footer Links */}
+          <motion.div className="mt-6 pt-6 border-t border-gray-700/50" variants={itemVariants}>
             <p className="text-center text-gray-400 text-sm">
               By logging in, you agree to our{' '}
-              <a href="#" className="text-purple-500 hover:text-purple-400">Terms of Service</a>
-              {' '}and{' '}
-              <a href="#" className="text-purple-500 hover:text-purple-400">Privacy Policy</a>
+              <Link to="/terms-of-service" className="text-purple-400 hover:text-purple-300">
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link to="/privacy-policy" className="text-purple-400 hover:text-purple-300">
+                Privacy Policy
+              </Link>
             </p>
           </motion.div>
         </motion.div>
+
+        {/* Security Note */}
+        <motion.div className="mt-8 text-center text-gray-400 text-sm" variants={itemVariants}>
+          <p>🔒 Your data is protected with industry-standard encryption.</p>
+        </motion.div>
       </motion.div>
+
+      <style jsx>{`
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        .font-orbitron {
+          font-family: 'Orbitron', sans-serif;
+        }
+
+        @keyframes float {
+          0% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0); }
+        }
+
+        .animate-float {
+          animation: float 4s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
-}
+});
 
 export default Login;
