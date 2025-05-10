@@ -60,6 +60,7 @@ import GameAngryBird from "./pages/Games/Angry-Birds";
 import Layout from "./components/Layout";
 import MobileNavigation from './components/MobileNavigation';
 import Toast from './components/Toast';
+import MobileDownload from './pages/MobileDownload';
 
 function App() {
 
@@ -103,6 +104,7 @@ function App() {
               <Route path="/about" element={<AboutUs />} />
               <Route path="/how-to-play" element={<HowToPlay />} />
               <Route path="/contact" element={<ContactUs />} />
+              <Route path="/download" element={<MobileDownload />} />
 
               {/* Protected Routes */}
               <Route path="/home" element={<PrivateRoute><GameHome /></PrivateRoute>} />

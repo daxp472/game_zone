@@ -41,25 +41,30 @@ function LandingPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-800">
+    <div className="flex flex-col min-h-screen bg-gray-900">
       <LandingNavbar />
 
       <main className="flex-grow">
-        <section className="px-20 py-24 max-md:px-5">
-          <div className="flex flex-wrap items-center">
+        <section className="relative px-20 py-32 max-md:px-5">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/a1a2b128ed76445fbc89bb2309e3a04b/b514ab657358fc78ed39c431de981593f5ca302de869b8d69899d3721e5726f8?apiKey=a1a2b128ed76445fbc89bb2309e3a04b&"
+            alt="Gaming Experience"
+            className="absolute inset-0 w-full h-full object-cover opacity-50"
+          />
+          <div className="relative container mx-auto flex flex-wrap items-center">
             <div className="w-1/2 pr-12 max-md:w-full max-md:pr-0">
-              <h1 className="text-6xl font-bold text-white">
+              <h1 className="text-5xl font-extrabold text-white leading-tight">
                 Enter the Ultimate <span className="text-purple-400">Gaming</span> Experience
               </h1>
-              <p className="mt-6 text-xl text-gray-300">
+              <p className="mt-6 text-xl text-gray-200">
                 Join millions of players worldwide in the most immersive gaming platform. Play, compete, and win!
               </p>
               <div className="flex gap-4 mt-8">
-                <button className="px-8 py-4 text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors" onClick={() => window.location.href = '/login'}>
+                <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full hover:scale-105 transition-transform duration-200" onClick={() => window.location.href = '/login'}>
                   Play Now
                 </button>
-                <button className="px-8 py-4 text-purple-400 border-2 border-purple-400 rounded-lg hover:bg-purple-400 hover:text-white transition-colors" onClick={() => window.location.href = '/about'}>
-                  Learn More
+                <button className="px-8 py-4 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full hover:scale-105 transition-transform duration-200" onClick={() => window.location.href = '/download'}>
+                  Download Mobile App
                 </button>
               </div>
             </div>
@@ -67,22 +72,22 @@ function LandingPage() {
               <img
                 src="https://cdn.builder.io/api/v1/image/assets/a1a2b128ed76445fbc89bb2309e3a04b/b514ab657358fc78ed39c431de981593f5ca302de869b8d69899d3721e5726f8?apiKey=a1a2b128ed76445fbc89bb2309e3a04b&"
                 alt="Gaming Experience"
-                className="w-full rounded-lg shadow-2xl"
+                className="w-full rounded-xl shadow-2xl"
               />
             </div>
           </div>
         </section>
 
-        <section className="px-20 py-24 bg-gray-900 max-md:px-5">
+        <section className="px-20 py-24 bg-gradient-to-b from-gray-900 to-[#1a1b26] max-md:px-5">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white">Why Choose GameZone?</h2>
-            <p className="mt-4 text-gray-400">Experience gaming like never before</p>
+            <h2 className="text-4xl font-extrabold text-white">Why Choose GameZone?</h2>
+            <p className="mt-4 text-gray-300">Experience gaming like never before</p>
           </div>
           <div className="grid grid-cols-3 gap-8 max-md:grid-cols-1">
             {features.map((feature, index) => (
-              <div key={index} className="p-8 bg-gray-800 rounded-xl">
+              <div key={index} className="p-8 bg-gray-800 rounded-xl hover:scale-105 transition-transform duration-200 shadow-lg">
                 <h3 className="text-xl font-bold text-white">{feature.title}</h3>
-                <p className="mt-4 text-gray-400">{feature.description}</p>
+                <p className="mt-4 text-gray-300">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -90,12 +95,12 @@ function LandingPage() {
 
         <section className="px-20 py-24 max-md:px-5">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white">Popular Games</h2>
-            <p className="mt-4 text-gray-400">Choose from our wide selection of games</p>
+            <h2 className="text-4xl font-extrabold text-white">Popular Games</h2>
+            <p className="mt-4 text-gray-300">Choose from our wide selection of games</p>
           </div>
           <div className="grid grid-cols-4 gap-8 max-md:grid-cols-1">
             {games.map((game, index) => (
-              <div key={index} className="relative overflow-hidden rounded-xl group">
+              <div key={index} className="relative overflow-hidden rounded-xl group hover:scale-105 transition-transform duration-200 shadow-lg">
                 <img
                   src={game.image}
                   alt={game.title}
@@ -111,13 +116,18 @@ function LandingPage() {
         </section>
 
         <section className="px-20 py-24 text-center max-md:px-5">
-          <h2 className="text-4xl font-bold text-white">Ready to Start Your Gaming Journey?</h2>
+          <h2 className="text-4xl font-extrabold text-white">Ready to Start Your Gaming Journey?</h2>
           <p className="mt-6 text-xl text-gray-300">
             Join GameZone today and experience gaming at its finest
           </p>
-          <button className="mt-8 px-8 py-4 text-lg text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors" onClick={() => window.location.href = '/register'}>
-            Create Account
-          </button>
+          <div className="flex justify-center gap-4 mt-8">
+            <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full hover:scale-105 transition-transform duration-200" onClick={() => window.location.href = '/register'}>
+              Create Account
+            </button>
+            <button className="px-8 py-4 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full hover:scale-105 transition-transform duration-200" onClick={() => window.location.href = '/download'}>
+              Download Mobile App
+            </button>
+          </div>
         </section>
       </main>
 
