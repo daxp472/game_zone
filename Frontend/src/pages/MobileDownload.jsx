@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import LandingNavbar from '../components/LandingNavbar';
 import LandingFooter from '../components/LandingFooter';
-import { FaApple, FaGooglePlay, FaHome, FaUserPlus, FaInfoCircle, FaArrowLeft } from 'react-icons/fa';
+import { FaApple, FaGooglePlay, FaHome, FaUserPlus, FaInfoCircle, FaArrowLeft, FaDownload } from 'react-icons/fa';
 
 function MobileDownload() {
+  const [popup, setPopup] = useState(null);
+
+  const handlePopup = (type) => {
+    setPopup(type);
+    setTimeout(() => setPopup(null), 9000); // Auto-close after 9 seconds
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-[#0f0c29] to-[#302b63]">
       <LandingNavbar />
@@ -17,26 +24,34 @@ function MobileDownload() {
               Download GameZone App
             </h1>
             <p className="mt-6 text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto animate-fade-in delay-100">
-              Experience gaming like never before. Download our mobile app for seamless gameplay, tournaments, and community vibes on the go!
+              Experience gaming like never before. Our mobile app is coming soon, but you can grab the Android APK now!
             </p>
             <div className="flex flex-wrap justify-center gap-4 mt-10">
-              <a
-                href="https://www.apple.com/app-store/"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => handlePopup('ios')}
                 className="flex items-center px-6 py-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-full hover:scale-110 hover:shadow-[0_0_20px_rgba(139,92,246,0.7)] transition-all duration-300"
               >
                 <FaApple size={24} className="mr-2" />
                 App Store
-              </a>
-              <a
-                href="https://play.google.com/store"
-                target="_blank"
-                rel="noopener noreferrer"
+              </button>
+              <button
+                onClick={() => handlePopup('android')}
                 className="flex items-center px-6 py-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-full hover:scale-110 hover:shadow-[0_0_20px_rgba(139,92,246,0.7)] transition-all duration-300"
               >
                 <FaGooglePlay size={24} className="mr-2" />
                 Google Play
+              </button>
+            </div>
+            {/* APK Download Button */}
+            <div className="mt-6">
+              <a
+                href="https://drive.google.com/your-apk-link" // Replace with your Google Drive link
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full hover:scale-110 hover:shadow-[0_0_20px_rgba(34,197,94,0.7)] transition-all duration-300"
+              >
+                <FaDownload size={20} className="mr-2" />
+                Download APK
               </a>
             </div>
           </div>
@@ -52,22 +67,22 @@ function MobileDownload() {
 
         {/* Features Section */}
         <section className="px-6 py-20 md:px-20 bg-gradient-to-b from-[#0f0c29] to-gray-900">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white text-center mb-16">Why Download GameZone?</h2>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-white text-center mb-16">Why GameZone Mobile?</h2>
           <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="p-8 bg-gray-800/50 backdrop-blur-md rounded-2xl hover:scale-105 transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
               <div className="text-3xl text-purple-400 mb-4">🎮</div>
               <h3 className="text-xl font-bold text-white">Seamless Gameplay</h3>
-              <p className="mt-4 text-gray-200">Enjoy lag-free gaming with optimized performance on iOS and Android.</p>
+              <p className="mt-4 text-gray-200">Enjoy lag-free gaming optimized for mobile devices.</p>
             </div>
             <div className="p-8 bg-gray-800/50 backdrop-blur-md rounded-2xl hover:scale-105 transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
               <div className="text-3xl text-purple-400 mb-4">🏆</div>
               <h3 className="text-xl font-bold text-white">Live Tournaments</h3>
-              <p className="mt-4 text-gray-200">Join real-time tournaments and compete for epic rewards anytime, anywhere.</p>
+              <p className="mt-4 text-gray-200">Compete in real-time tournaments from anywhere.</p>
             </div>
             <div className="p-8 bg-gray-800/50 backdrop-blur-md rounded-2xl hover:scale-105 transition-all duration-300 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
               <div className="text-3xl text-purple-400 mb-4">🌐</div>
               <h3 className="text-xl font-bold text-white">Global Community</h3>
-              <p className="mt-4 text-gray-200">Connect with millions of gamers worldwide and build your squad.</p>
+              <p className="mt-4 text-gray-200">Connect with gamers worldwide and build your squad.</p>
             </div>
           </div>
         </section>
@@ -76,7 +91,7 @@ function MobileDownload() {
         <section className="px-6 py-20 md:px-20 text-center bg-gradient-to-r from-purple-900/50 to-indigo-900/50">
           <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6">Ready to Level Up?</h2>
           <p className="text-xl text-gray-200 max-w-2xl mx-auto mb-10">
-            Download the GameZone app now and dive into the ultimate gaming experience.
+            Grab the APK now or join our community to stay updated on iOS and Play Store releases!
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -109,6 +124,40 @@ function MobileDownload() {
             </Link>
           </div>
         </section>
+
+        {/* Popups */}
+        {popup === 'ios' && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+            <div className="bg-gradient-to-b from-gray-800 to-gray-900 p-6 rounded-2xl max-w-md w-full mx-4 shadow-[0_0_20px_rgba(139,92,246,0.7)] animate-popup">
+              <h3 className="text-2xl font-bold text-white mb-4">iOS App Status</h3>
+              <p className="text-gray-200 mb-6">
+                The GameZone iOS app is currently under development. Stay tuned for updates in 2-3 months!
+              </p>
+              <button
+                onClick={() => setPopup(null)}
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full hover:scale-105 transition-all duration-300"
+              >
+                Got It
+              </button>
+            </div>
+          </div>
+        )}
+        {popup === 'android' && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+            <div className="bg-gradient-to-b from-gray-800 to-gray-900 p-6 rounded-2xl max-w-md w-full mx-4 shadow-[0_0_20px_rgba(139,92,246,0.7)] animate-popup">
+              <h3 className="text-2xl font-bold text-white mb-4">Android App Status</h3>
+              <p className="text-gray-200 mb-6">
+                GameZone Android app deployment is in progress. Download the APK below to start gaming now!
+              </p>
+              <button
+                onClick={() => setPopup(null)}
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full hover:scale-105 transition-all duration-300"
+              >
+                Got It
+              </button>
+            </div>
+          </div>
+        )}
       </main>
       <LandingFooter />
       <style jsx>{`
@@ -121,6 +170,10 @@ function MobileDownload() {
           50% { transform: translateY(-10px); }
           100% { transform: translateY(0); }
         }
+        @keyframes popup {
+          from { opacity: 0; transform: scale(0.8); }
+          to { opacity: 1; transform: scale(1); }
+        }
         .animate-fade-in {
           animation: fade-in 0.8s ease-out;
         }
@@ -129,6 +182,9 @@ function MobileDownload() {
         }
         .animate-float {
           animation: float 3s ease-in-out infinite;
+        }
+        .animate-popup {
+          animation: popup 0.3s ease-out;
         }
       `}</style>
     </div>
