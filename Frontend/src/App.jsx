@@ -61,6 +61,10 @@ import Layout from "./components/Layout";
 import MobileNavigation from './components/MobileNavigation';
 import Toast from './components/Toast';
 import MobileDownload from './pages/MobileDownload';
+import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
+import TermsOfService from './pages/Legal/TermsOfService';
+import CookiePolicy from './pages/Legal/CookiePolicy';
+
 
 function App() {
 
@@ -104,7 +108,14 @@ function App() {
               <Route path="/about" element={<AboutUs />} />
               <Route path="/how-to-play" element={<HowToPlay />} />
               <Route path="/contact" element={<ContactUs />} />
+
+
+              {/* Legal Pages */}
               <Route path="/download" element={<MobileDownload />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/cookie-policy" element={<CookiePolicy />} />
+
 
               {/* Protected Routes */}
               <Route path="/home" element={<PrivateRoute><GameHome /></PrivateRoute>} />

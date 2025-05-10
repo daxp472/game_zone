@@ -1,6 +1,6 @@
 import React from 'react';
-import LandingNavbar from '../components/LandingNavbar';
-import LandingFooter from '../components/LandingFooter';
+import LandingNavbar from '../../components/LandingNavbar';
+import LandingFooter from '../../components/LandingFooter';
 
 function PrivacyPolicy() {
   return (
