@@ -1,9 +1,10 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
-import { FaBars, FaTimes, FaSearch } from 'react-icons/fa';
+import { FaBars, FaTimes, FaSearch, FaBell, FaMoon, FaSun } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from './Side-bar/Sidebar';
+import { toast } from 'react-toastify';
 
 function GameNavbar() {
   const { user, logout } = useAuth();
@@ -11,13 +12,14 @@ function GameNavbar() {
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef(null);
   const [clickCount, setClickCount] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleProfileClick = () => {
     setClickCount((prevCount) => prevCount + 1);
-
     setTimeout(() => {
       if (clickCount >= 1) {
         navigate('/profile');
@@ -26,6 +28,29 @@ function GameNavbar() {
       }
       setClickCount(0);
     }, 200);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      toast.info(`Searching for "${searchQuery}" (coming soon!)`, {
+        position: 'top-right',
+        autoClose: 3000,
+        theme: 'dark',
+      });
+      setSearchQuery('');
+      setSearchOpen(false);
+    }
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.documentElement.classList.toggle('dark');
+    toast.info(darkMode ? 'Light mode enabled!' : 'Dark mode enabled!', {
+      position: 'top-right',
+      autoClose: 2000,
+      theme: 'dark',
+    });
   };
 
   const handleClickOutside = (event) => {
@@ -45,29 +70,37 @@ function GameNavbar() {
 
   const navVariants = {
     hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
   };
 
   const dropdownVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.2 } }
+    hidden: { opacity: 0, scale: 0.95, y: -10 },
+    visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.2 } },
   };
 
   return (
-    <div className="flex">
-      {/* Sidebar - Hidden in welcome section on homepage */}
-      <div className={`hidden lg:block ${
-        !hiddenSidebarRoutes.includes(location.pathname) ? '' : 'lg:hidden'
-      } ${location.pathname === '/home' ? 'homepage-sidebar' : ''}`}>
+    <div className="flex font-orbitron">
+      {/* Sidebar */}
+      <div
+        className={`hidden lg:block ${
+          !hiddenSidebarRoutes.includes(location.pathname) ? '' : 'lg:hidden'
+        } ${location.pathname === '/home' ? 'homepage-sidebar' : ''}`}
+      >
         <Sidebar />
       </div>
 
-      {/* Mobile Sidebar - Only visible when toggled on mobile */}
+      {/* Mobile Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
-          <div className="lg:hidden">
+          <motion.div
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ duration: 0.3 }}
+            className="lg:hidden fixed top-0 left-0 h-full z-50"
+          >
             <Sidebar />
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -75,71 +108,103 @@ function GameNavbar() {
         initial="hidden"
         animate="visible"
         variants={navVariants}
-        className={`bg-[#1a1b26] p-4 fixed top-0 w-full z-40 shadow-lg h-16 ${
+        className={`bg-[#1a1b26]/95 p-4 fixed top-0 w-full z-40 shadow-xl h-16 backdrop-blur-xl border-b border-purple-500/30 ${
           !hiddenSidebarRoutes.includes(location.pathname) ? 'ml-0 lg:ml-16' : ''
         }`}
       >
         <div className="container mx-auto h-full">
           <div className="flex justify-between items-center h-full">
             <div className="flex items-center space-x-4">
-              <button
+              <motion.button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="text-gray-300 hover:text-purple-500 lg:hidden"
+                className="text-gray-300 hover:text-purple-400 lg:hidden"
                 aria-label="Toggle menu"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 {sidebarOpen ? <FaTimes className="h-5 w-5" /> : <FaBars className="h-5 w-5" />}
-              </button>
-              
-              <Link to="/home" className="text-purple-500 text-xl font-bold whitespace-nowrap">
+              </motion.button>
+
+              <Link to="/home" className="text-xl font-extrabold">
                 <motion.span
                   whileHover={{ scale: 1.05 }}
-                  className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500"
+                  className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
                 >
                   GameZone
                 </motion.span>
               </Link>
 
-              {/* Desktop Navigation - Only visible on PC */}
+              {/* Desktop Navigation */}
               <div className="hidden lg:flex items-center space-x-6">
-                <Link to="/home" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">Home</Link>
-                <Link to="/categories" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">Categories</Link>
-                <Link to="/new-games" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">New Games</Link>
-                <Link to="/popular" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">Popular</Link>
-                <Link to="/multiplayer" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">Multiplayer</Link>
-                <Link to="/tournaments" className="text-gray-300 hover:text-purple-500 transition-colors text-sm">Tournaments</Link>
+                {['Home', 'Categories', 'New Games', 'Popular', 'Multiplayer', 'Tournaments'].map((item, i) => (
+                  <Link
+                    key={i}
+                    to={item === 'Home' ? '/home' : `/${item.toLowerCase().replace(' ', '-')}`}
+                    className="text-gray-300 hover:text-purple-400 transition-colors text-sm font-medium"
+                  >
+                    <motion.span whileHover={{ y: -2, transition: { duration: 0.2 } }}>{item}</motion.span>
+                  </Link>
+                ))}
               </div>
             </div>
 
             <div className="flex items-center space-x-4">
-              <motion.div 
+              {/* Search Bar */}
+              <motion.form
+                onSubmit={handleSearch}
                 className="relative"
                 initial={false}
-                animate={searchOpen ? { width: "200px" } : { width: "40px" }}
+                animate={searchOpen ? { width: '200px' } : { width: '40px' }}
                 transition={{ duration: 0.3 }}
               >
-                <button
+                <motion.button
+                  type="button"
                   onClick={() => setSearchOpen(!searchOpen)}
-                  className="lg:hidden text-gray-300 hover:text-purple-500"
+                  className="lg:hidden text-gray-300 hover:text-purple-400"
                   aria-label="Search"
+                  whileHover={{ scale: 1.1 }}
                 >
                   <FaSearch className="h-5 w-5" />
-                </button>
+                </motion.button>
                 <input
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search games..."
-                  className={`bg-[#2a2b36] text-gray-300 px-4 py-1 rounded-md w-full transition-all duration-300 ${
+                  className={`bg-[#2a2b36]/80 text-gray-300 px-4 py-1 rounded-lg w-full transition-all duration-300 border border-gray-700/50 focus:ring-2 focus:ring-purple-500 focus:outline-none ${
                     searchOpen ? 'opacity-100' : 'opacity-0 hidden lg:block'
                   }`}
                 />
-              </motion.div>
+              </motion.form>
 
+              {/* Notification Bell */}
+              <motion.button
+                className="text-gray-300 hover:text-purple-400"
+                onClick={() => toast.info('Notifications coming soon!', { position: 'top-right', theme: 'dark' })}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaBell className="h-5 w-5" />
+              </motion.button>
+
+              {/* Dark Mode Toggle */}
+              <motion.button
+                onClick={toggleDarkMode}
+                className="text-gray-300 hover:text-purple-400"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                {darkMode ? <FaSun className="h-5 w-5" /> : <FaMoon className="h-5 w-5" />}
+              </motion.button>
+
+              {/* Profile Dropdown */}
               <div className="relative" ref={dropdownRef}>
-                <motion.img 
-                  src={user?.profilePicture || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4"}
-                  alt="Profile" 
-                  className="w-10 h-10 rounded-full cursor-pointer"
+                <motion.img
+                  src={user?.profilePicture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4'}
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full cursor-pointer border border-purple-500/50"
                   onClick={handleProfileClick}
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.1, rotate: 5 }}
                   whileTap={{ scale: 0.95 }}
                 />
                 <AnimatePresence>
@@ -149,13 +214,26 @@ function GameNavbar() {
                       animate="visible"
                       exit="hidden"
                       variants={dropdownVariants}
-                      className="absolute right-0 mt-2 w-48 bg-[#2a2b36] rounded-md shadow-lg py-1 z-50"
+                      className="absolute right-0 mt-2 w-48 bg-[#2a2b36]/95 rounded-lg shadow-xl py-1 z-50 backdrop-blur-xl border border-purple-500/30"
                     >
-                      <Link to="/profile" className="block px-4 py-2 text-sm text-gray-300 hover:bg-purple-600">Profile</Link>
-                      <Link to="/profile/settings" className="block px-4 py-2 text-sm text-gray-300 hover:bg-purple-600">Settings</Link>
-                      <button 
-                        onClick={logout}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-purple-600"
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-purple-600/80 hover:text-white"
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        to="/profile/settings"
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-purple-600/80 hover:text-white"
+                      >
+                        Settings
+                      </Link>
+                      <button
+                        onClick={() => {
+                          logout();
+                          toast.success('Logged out successfully!', { position: 'top-right', theme: 'dark' });
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-purple-600/80 hover:text-white"
                       >
                         Logout
                       </button>
@@ -172,3 +250,11 @@ function GameNavbar() {
 }
 
 export default GameNavbar;
+
+<style jsx>{`
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+  .font-orbitron {
+    font-family: 'Orbitron', sans-serif;
+  }
+`}</style>
