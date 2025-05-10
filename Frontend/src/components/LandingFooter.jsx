@@ -11,9 +11,9 @@ function Footer() {
   ];
 
   const legalLinks = [
-    { text: 'Privacy Policy', link: '#' },
-    { text: 'Terms of Service', link: '#' },
-    { text: 'Cookie Policy', link: '#' },
+    { text: 'Privacy Policy', link: '/privacy-policy' },
+    { text: 'Terms of Service', link: '/terms-of-service' },
+    { text: 'Cookie Policy', link: '/cookie-policy' },
   ];
 
   const renderBrandSection = () => (
